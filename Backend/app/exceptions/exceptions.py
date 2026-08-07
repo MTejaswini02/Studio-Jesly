@@ -64,3 +64,20 @@ class ServiceAlreadyExistsException(HTTPException):
             status_code=400,
             detail="Service already exists"
         )
+
+class PortfolioNotFoundException(HTTPException):
+
+    def __init__(self):
+        super().__init__(
+            status_code=404,
+            detail="Portfolio not found"
+        )
+
+
+class PortfolioAlreadyExistsException(HTTPException):
+
+    def __init__(self):
+        super().__init__(
+            status_code=400,
+            detail="Portfolio already exists for this project"
+        )
