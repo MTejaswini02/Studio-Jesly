@@ -1,7 +1,10 @@
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { logout } from "../../utils/auth";
 
-function Sidebar() {
+function Sidebar({
+  activePage,
+  setActivePage,
+}) {
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -26,37 +29,94 @@ function Sidebar() {
 
       <nav className="mt-8 flex flex-col flex-1">
 
-        <Link
-          to="/admin"
-          className="px-6 py-4 hover:bg-zinc-800 text-white"
+        <button
+          onClick={() => setActivePage("dashboard")}
+          className={`px-6 py-4 text-left transition-colors ${
+            activePage === "dashboard"
+              ? "bg-yellow-500 text-black font-semibold"
+              : "text-white hover:bg-zinc-800"
+          }`}
         >
           Dashboard
-        </Link>
+        </button>
 
-        <Link
-          to="/admin"
-          className="px-6 py-4 hover:bg-zinc-800 text-white"
+        <button
+          onClick={() => setActivePage("contacts")}
+          className={`px-6 py-4 text-left transition-colors ${
+            activePage === "contacts"
+              ? "bg-yellow-500 text-black font-semibold"
+              : "text-white hover:bg-zinc-800"
+          }`}
         >
           Contacts
-        </Link>
+        </button>
 
-        <div className="px-6 py-4 text-zinc-600">
-          Projects
-        </div>
-
-        <div className="px-6 py-4 text-zinc-600">
+        <button
+          onClick={() => setActivePage("clients")}
+          className={`px-6 py-4 text-left transition-colors ${
+            activePage === "clients"
+              ? "bg-yellow-500 text-black font-semibold"
+              : "text-white hover:bg-zinc-800"
+          }`}
+        >
           Clients
-        </div>
+        </button>
 
-        <div className="px-6 py-4 text-zinc-600">
+        <button
+          onClick={() => setActivePage("services")}
+          className={`px-6 py-4 text-left transition-colors ${
+            activePage === "services"
+              ? "bg-yellow-500 text-black font-semibold"
+              : "text-white hover:bg-zinc-800"
+          }`}
+        >
           Services
-        </div>
+        </button>
 
-        <div className="px-6 py-4 text-zinc-600">
-          Users
-        </div>
+        <button
+          onClick={() => setActivePage("projects")}
+          className={`px-6 py-4 text-left transition-colors ${
+            activePage === "projects"
+              ? "bg-yellow-500 text-black font-semibold"
+              : "text-white hover:bg-zinc-800"
+          }`}
+        >
+          Projects
+        </button>
 
-        {/* Push Logout to the bottom */}
+        <button
+          onClick={() => setActivePage("portfolio")}
+          className={`px-6 py-4 text-left transition-colors ${
+            activePage === "portfolio"
+              ? "bg-yellow-500 text-black font-semibold"
+              : "text-white hover:bg-zinc-800"
+          }`}
+        >
+          Portfolio
+        </button>
+
+        <button
+          onClick={() => setActivePage("files")}
+          className={`px-6 py-4 text-left transition-colors ${
+            activePage === "files"
+              ? "bg-yellow-500 text-black font-semibold"
+              : "text-white hover:bg-zinc-800"
+          }`}
+        >
+          Project Files
+        </button>
+
+        <button
+          onClick={() => setActivePage("activity")}
+          className={`px-6 py-4 text-left transition-colors ${
+            activePage === "activity"
+              ? "bg-yellow-500 text-black font-semibold"
+              : "text-white hover:bg-zinc-800"
+          }`}
+        >
+          Activity Logs
+        </button>
+
         <div className="mt-auto border-t border-zinc-800">
 
           <button

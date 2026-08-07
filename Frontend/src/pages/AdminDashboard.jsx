@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
-import ContactModal from "../components/Contacts/ContactModal";
+
 import Layout from "../components/Dashboard/Layout";
+
 import ContactTable from "../components/Contacts/ContactTable";
+import ContactModal from "../components/Contacts/ContactModal";
+
 import {
   getContacts,
   deleteContact,
@@ -9,28 +12,33 @@ import {
 } from "../api/contactApi";
 
 function AdminDashboard() {
+
+  const [activePage, setActivePage] = useState("dashboard");
+
   const [contacts, setContacts] = useState([]);
   const [selectedContact, setSelectedContact] = useState(null);
 
-  // Load contacts from backend
   async function loadContacts() {
     try {
       const response = await getContacts();
       setContacts(response.data);
     } catch (error) {
-      console.error("Failed to load contacts:", error);
+      console.error(error);
     }
   }
 
   useEffect(() => {
     const fetchContacts = async () => {
-      await loadContacts();
-    };
+      try {
+        await loadContacts();
+      } catch (error) {
+      console.error(error);
+    }
+  };
 
-    fetchContacts();
-  }, []);
+  fetchContacts();
+}, []);
 
-  // Dashboard Statistics
   const totalContacts = contacts.length;
 
   const pendingContacts = contacts.filter(
@@ -41,106 +49,183 @@ function AdminDashboard() {
     (contact) => contact.status === "Completed"
   ).length;
 
-  // View Contact
   const handleView = (contact) => {
     setSelectedContact(contact);
   };
 
-  // Delete Contact
   const handleDelete = async (id) => {
+
     const confirmed = window.confirm(
       "Are you sure you want to delete this contact?"
     );
 
     if (!confirmed) return;
 
-    try {
-      await deleteContact(id);
-      await loadContacts();
-    } catch (error) {
-      console.error(error);
-    }
+    await deleteContact(id);
+
+    loadContacts();
+
   };
 
-  // Update Status
   const handleStatusChange = async (id, status) => {
-    try {
-      await updateStatus(id, status);
 
-      alert("Status updated successfully.");
+    await updateStatus(id, status);
 
-      await loadContacts();
-    } catch (error) {
-      console.error(error);
+    loadContacts();
 
-      alert("Failed to update status.");
-    }
   };
+
   return (
-    <Layout>
 
-      <h1 className="text-3xl font-bold text-white mb-6">
-        Contact Requests
-      </h1>
+    <Layout
+      activePage={activePage}
+      setActivePage={setActivePage}
+    >
 
-      {/* Dashboard Statistics */}
+      {/* ================= DASHBOARD ================= */}
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      {activePage === "dashboard" && (
 
-        <div className="bg-[#161B22] rounded-xl p-6">
+        <>
 
-          <h3 className="text-gray-400">
-            Total Contacts
-          </h3>
+          <h1 className="text-3xl font-bold text-white mb-8">
+            Dashboard
+          </h1>
 
-          <p className="text-4xl font-bold text-white mt-3">
-            {totalContacts}
-          </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-        </div>
+            <div className="bg-[#161B22] p-6 rounded-xl">
 
-        <div className="bg-[#161B22] rounded-xl p-6">
+              <h3 className="text-gray-400">
+                Total Contacts
+              </h3>
 
-          <h3 className="text-gray-400">
-            Pending
-          </h3>
+              <p className="text-4xl font-bold text-white mt-3">
+                {totalContacts}
+              </p>
 
-          <p className="text-4xl font-bold text-yellow-400 mt-3">
-            {pendingContacts}
-          </p>
+            </div>
 
-        </div>
+            <div className="bg-[#161B22] p-6 rounded-xl">
 
-        <div className="bg-[#161B22] rounded-xl p-6">
+              <h3 className="text-gray-400">
+                Pending
+              </h3>
 
-          <h3 className="text-gray-400">
-            Completed
-          </h3>
+              <p className="text-4xl font-bold text-yellow-400 mt-3">
+                {pendingContacts}
+              </p>
 
-          <p className="text-4xl font-bold text-green-400 mt-3">
-            {completedContacts}
-          </p>
+            </div>
 
-        </div>
+            <div className="bg-[#161B22] p-6 rounded-xl">
 
-      </div>
+              <h3 className="text-gray-400">
+                Completed
+              </h3>
 
-      {/* Contact Table */}
+              <p className="text-4xl font-bold text-green-400 mt-3">
+                {completedContacts}
+              </p>
 
-      <ContactTable
-        contacts={contacts}
-        onView={handleView}
-        onDelete={handleDelete}
-        onStatusChange={handleStatusChange}
-      />
+            </div>
 
-      <ContactModal
-        contact={selectedContact}
-        onClose={() => setSelectedContact(null)}
-      />
+          </div>
+
+        </>
+
+      )}
+
+      {/* ================= CONTACTS ================= */}
+
+      {activePage === "contacts" && (
+
+        <>
+
+          <h1 className="text-3xl font-bold text-white mb-6">
+            Contact Requests
+          </h1>
+
+          <ContactTable
+            contacts={contacts}
+            onView={handleView}
+            onDelete={handleDelete}
+            onStatusChange={handleStatusChange}
+          />
+
+          <ContactModal
+            contact={selectedContact}
+            onClose={() => setSelectedContact(null)}
+          />
+
+        </>
+
+      )}
+
+      {/* ================= CLIENTS ================= */}
+
+      {activePage === "clients" && (
+
+        <h1 className="text-3xl text-white">
+          Clients Module
+        </h1>
+
+      )}
+
+      {/* ================= SERVICES ================= */}
+
+      {activePage === "services" && (
+
+        <h1 className="text-3xl text-white">
+          Services Module
+        </h1>
+
+      )}
+
+      {/* ================= PROJECTS ================= */}
+
+      {activePage === "projects" && (
+
+        <h1 className="text-3xl text-white">
+          Projects Module
+        </h1>
+
+      )}
+
+      {/* ================= PORTFOLIO ================= */}
+
+      {activePage === "portfolio" && (
+
+        <h1 className="text-3xl text-white">
+          Portfolio Module
+        </h1>
+
+      )}
+
+      {/* ================= FILES ================= */}
+
+      {activePage === "files" && (
+
+        <h1 className="text-3xl text-white">
+          Project Files Module
+        </h1>
+
+      )}
+
+      {/* ================= ACTIVITY ================= */}
+
+      {activePage === "activity" && (
+
+        <h1 className="text-3xl text-white">
+          Activity Logs
+        </h1>
+
+      )}
 
     </Layout>
+
   );
+
 }
 
 export default AdminDashboard;
