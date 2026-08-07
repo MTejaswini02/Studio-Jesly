@@ -88,3 +88,11 @@ class ProjectFileNotFoundException(HTTPException):
             status_code=404,
             detail="Project file not found"
         )
+
+class ActivityLogNotFoundException(HTTPException):
+
+    def __init__(self):
+        super().__init__(
+            status_code=404,
+            detail="Activity log not found"
+        )

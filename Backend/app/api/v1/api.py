@@ -8,6 +8,9 @@ from app.api.v1.endpoints.portfolio_router import router as portfolio_router
 from app.api.v1.endpoints.project_file_router import (
     router as project_file_router,
 )
+from app.api.v1.endpoints.activity_log_router import (
+    router as activity_log_router,
+)
 api_router = APIRouter()
 
 api_router.include_router(user_router)
@@ -17,3 +20,4 @@ api_router.include_router(client_router)
 api_router.include_router(service_router)
 api_router.include_router(portfolio_router)
 api_router.include_router(project_file_router)
+api_router.include_router(activity_log_router)
