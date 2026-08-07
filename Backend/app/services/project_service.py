@@ -4,9 +4,10 @@ from app.models.project import Project
 from app.repositories.project_repository import ProjectRepository
 from app.schemas.project_schema import (
     ProjectCreate,
-    ProjectUpdate
+    ProjectUpdate,
 )
 from app.exceptions.exceptions import ProjectNotFoundException
+from app.utils.activity_logger import log_activity
 
 
 class ProjectService:
@@ -17,7 +18,7 @@ class ProjectService:
     def create_project(
         self,
         db: Session,
-        project_data: ProjectCreate
+        project_data: ProjectCreate,
     ):
 
         project = Project(
@@ -35,7 +36,18 @@ class ProjectService:
             notes=project_data.notes,
         )
 
-        return self.repository.create(db, project)
+        # Save the project
+        project = self.repository.create(db, project)
+
+        # Create activity log automatically
+        log_activity(
+            db=db,
+            project_id=project.id,
+            user_id=project.assigned_to,
+            activity=f"Project '{project.title}' created",
+        )
+
+        return project
 
     def get_projects(self, db: Session):
         return self.repository.get_all(db)
@@ -43,7 +55,7 @@ class ProjectService:
     def get_project(
         self,
         db: Session,
-        project_id: int
+        project_id: int,
     ):
 
         project = self.repository.get_by_id(db, project_id)
@@ -57,7 +69,7 @@ class ProjectService:
         self,
         db: Session,
         project_id: int,
-        project_data: ProjectUpdate
+        project_data: ProjectUpdate,
     ):
 
         project = self.repository.get_by_id(db, project_id)
@@ -75,7 +87,7 @@ class ProjectService:
     def delete_project(
         self,
         db: Session,
-        project_id: int
+        project_id: int,
     ):
 
         project = self.repository.get_by_id(db, project_id)
@@ -88,4 +100,3 @@ class ProjectService:
         return {
             "message": "Project deleted successfully"
         }
-    
