@@ -68,9 +68,7 @@ function ActivityLogsSection() {
 
     <>
 
-      <h1 className="text-3xl font-bold text-white mb-6">
-        Activity Logs
-      </h1>
+      
 
       <div className="space-y-4">
 

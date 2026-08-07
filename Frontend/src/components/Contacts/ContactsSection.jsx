@@ -11,7 +11,7 @@ function ContactsSection({
   return (
     <>
       <h1 className="text-3xl font-bold text-white mb-6">
-        Contact Requests
+        Requests
       </h1>
 
       <ContactTable

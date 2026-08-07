@@ -140,11 +140,7 @@ function ClientsSection() {
 
       <div className="flex justify-between items-center mb-6">
 
-        <h1 className="text-3xl font-bold text-white">
-
-          Clients
-
-        </h1>
+        
 
         <button
           onClick={handleAdd}

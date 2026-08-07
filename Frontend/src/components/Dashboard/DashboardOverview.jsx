@@ -1,51 +1,184 @@
-function DashboardOverview({
-  totalContacts,
-  pendingContacts,
-  completedContacts,
-}) {
-  return (
-    <>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+import { useEffect, useState } from "react";
+import { getDashboardData } from "../../api/dashboardApi";
 
-        <div className="bg-[#161B22] rounded-xl p-6">
+function DashboardOverview() {
 
-          <h3 className="text-gray-400">
-            Total Contacts
-          </h3>
+  const [data, setData] = useState(null);
 
-          <p className="text-4xl font-bold text-white mt-3">
-            {totalContacts}
-          </p>
+  useEffect(() => {
 
-        </div>
+    async function loadDashboard() {
 
-        <div className="bg-[#161B22] rounded-xl p-6">
+      try {
 
-          <h3 className="text-gray-400">
-            Pending
-          </h3>
+        const result =
+          await getDashboardData();
 
-          <p className="text-4xl font-bold text-yellow-400 mt-3">
-            {pendingContacts}
-          </p>
+        setData(result);
 
-        </div>
+      } catch (error) {
 
-        <div className="bg-[#161B22] rounded-xl p-6">
+        console.error(error);
 
-          <h3 className="text-gray-400">
-            Completed
-          </h3>
+      }
 
-          <p className="text-4xl font-bold text-green-400 mt-3">
-            {completedContacts}
-          </p>
+    }
 
-        </div>
+    loadDashboard();
+
+  }, []);
+
+  if (!data) {
+
+    return (
+
+      <div className="text-white">
+
+        Loading Dashboard...
 
       </div>
+
+    );
+
+  }
+
+  const pendingContacts =
+    data.contacts.filter(
+      (c) => c.status === "Pending"
+    ).length;
+
+  const completedProjects =
+    data.projects.filter(
+      (p) => p.status === "Completed"
+    ).length;
+
+  return (
+
+    <>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+
+        <Card
+          title="Projects"
+          value={data.projects.length}
+        />
+
+        <Card
+          title="Clients"
+          value={data.clients.length}
+        />
+
+        <Card
+          title="Services"
+          value={data.services.length}
+        />
+
+        <Card
+          title="Portfolio"
+          value={data.portfolio.length}
+        />
+
+        <Card
+          title="Files"
+          value={data.files.length}
+        />
+
+        <Card
+          title="Pending Contacts"
+          value={pendingContacts}
+        />
+
+        <Card
+          title="Completed Projects"
+          value={completedProjects}
+        />
+
+        <Card
+          title="Activities"
+          value={data.activities.length}
+        />
+
+      </div>
+
+      <div className="bg-[#161B22] rounded-xl mt-8 p-6">
+
+        <h2 className="text-2xl font-semibold text-white mb-5">
+
+          Recent Activity
+
+        </h2>
+
+        {
+
+          data.activities
+            .slice(0, 5)
+            .map((activity) => (
+
+              <div
+                key={activity.id}
+                className="border-b border-zinc-800 py-4"
+              >
+
+                <p className="text-white">
+
+                  {activity.activity}
+
+                </p>
+
+                <p className="text-gray-500 text-sm">
+
+                  {
+
+                    new Date(
+                      activity.created_at
+                    ).toLocaleString()
+
+                  }
+
+                </p>
+
+              </div>
+
+            ))
+
+        }
+
+      </div>
+
     </>
+
   );
+
+}
+
+function Card({
+
+  title,
+
+  value,
+
+}) {
+
+  return (
+
+    <div className="bg-[#161B22] rounded-xl p-6">
+
+      <h3 className="text-gray-400">
+
+        {title}
+
+      </h3>
+
+      <p className="text-4xl font-bold text-white mt-3">
+
+        {value}
+
+      </p>
+
+    </div>
+
+  );
+
 }
 
 export default DashboardOverview;
