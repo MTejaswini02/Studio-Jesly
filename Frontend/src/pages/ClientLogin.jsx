@@ -1,4 +1,9 @@
-import { useCallback, useEffect, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
+
 import { useNavigate } from "react-router-dom";
 
 import {
@@ -6,8 +11,10 @@ import {
   googleLogin,
 } from "../api/authApi";
 
+import { isClient } from "../utils/auth";
 
-function AdminLogin() {
+
+function ClientLogin() {
 
   const navigate = useNavigate();
 
@@ -28,22 +35,51 @@ function AdminLogin() {
           response.credential
         );
 
+
+        const token =
+          result.data.access_token;
+
+
         localStorage.setItem(
           "access_token",
-          result.data.access_token
+          token
         );
 
-        navigate("/admin");
+
+        // Check the role from JWT
+
+        if (isClient()) {
+
+          navigate("/client");
+
+          return;
+
+        }
+
+
+        // Admin or other role tried
+        // to use Client Login
+
+        localStorage.removeItem(
+          "access_token"
+        );
+
+
+        alert(
+          "This Google account is not registered as a client."
+        );
 
       } catch (error) {
 
         console.error(
-          "Google login failed:",
+          "Google client login failed:",
           error
         );
 
+
         alert(
-          "Google login failed. Make sure your Google account is registered in Studio Jesly."
+          error?.response?.data?.detail ||
+          "Google login failed."
         );
 
       }
@@ -59,14 +95,16 @@ function AdminLogin() {
 
   useEffect(() => {
 
-    const script = document.createElement(
-      "script"
-    );
+    const script =
+      document.createElement("script");
+
 
     script.src =
       "https://accounts.google.com/gsi/client";
 
+
     script.async = true;
+
     script.defer = true;
 
 
@@ -88,14 +126,15 @@ function AdminLogin() {
         client_id:
           import.meta.env.VITE_GOOGLE_CLIENT_ID,
 
-        callback: handleGoogleLogin,
+        callback:
+          handleGoogleLogin,
 
       });
 
 
       const googleButton =
         document.getElementById(
-          "google-login-button"
+          "google-client-login-button"
         );
 
 
@@ -142,29 +181,70 @@ function AdminLogin() {
 
   const handleLogin = async () => {
 
+    if (!email || !password) {
+
+      alert(
+        "Please enter your email and password."
+      );
+
+      return;
+
+    }
+
+
     try {
 
-      const response = await loginUser(
-        email,
-        password
-      );
+      const response =
+        await loginUser(
+          email,
+          password
+        );
+
+
+      const token =
+        response.data.access_token;
 
 
       localStorage.setItem(
         "access_token",
-        response.data.access_token
+        token
       );
 
 
-      navigate("/admin");
+      // Check role
+
+      if (isClient()) {
+
+        navigate("/client");
+
+        return;
+
+      }
+
+
+      // Admin tried client login
+
+      localStorage.removeItem(
+        "access_token"
+      );
+
+
+      alert(
+        "This login is for client accounts only."
+      );
 
     } catch (error) {
 
-      alert(
-        "Invalid email or password"
+      console.error(
+        "Client login failed:",
+        error
       );
 
-      console.error(error);
+
+      alert(
+        error?.response?.data?.detail ||
+        "Invalid email or password."
+      );
 
     }
 
@@ -181,12 +261,14 @@ function AdminLogin() {
 
       <div className="bg-[#161B22] p-10 rounded-xl w-[420px]">
 
+
         <h1 className="text-3xl font-bold text-white text-center mb-2">
           Studio Jesly
         </h1>
 
+
         <p className="text-gray-400 text-center mb-8">
-          Admin Login
+          Client Login
         </p>
 
 
@@ -244,9 +326,28 @@ function AdminLogin() {
         {/* Google Login */}
 
         <div
-          id="google-login-button"
+          id="google-client-login-button"
           className="flex justify-center"
         />
+
+
+        {/* Signup */}
+
+        <p className="text-gray-400 text-center mt-6">
+
+          Don't have an account?{" "}
+
+          <button
+            onClick={() =>
+              navigate("/signup")
+            }
+            className="text-yellow-400 hover:text-yellow-300"
+          >
+            Sign Up
+          </button>
+
+        </p>
+
 
       </div>
 
@@ -257,4 +358,4 @@ function AdminLogin() {
 }
 
 
-export default AdminLogin;
+export default ClientLogin;

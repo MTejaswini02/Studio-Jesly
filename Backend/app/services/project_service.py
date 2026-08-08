@@ -1,19 +1,34 @@
 from sqlalchemy.orm import Session
 
 from app.models.project import Project
+from app.models.user import User
 from app.repositories.project_repository import ProjectRepository
+from app.repositories.client_repository import ClientRepository
+
 from app.schemas.project_schema import (
     ProjectCreate,
     ProjectUpdate,
 )
-from app.exceptions.exceptions import ProjectNotFoundException
+
+from app.exceptions.exceptions import (
+    ProjectNotFoundException,
+    ClientNotFoundException,
+)
+
 from app.utils.activity_logger import log_activity
 
 
 class ProjectService:
 
     def __init__(self):
+
         self.repository = ProjectRepository()
+        self.client_repository = ClientRepository()
+
+
+    # -----------------------------------------
+    # Create Project - Admin
+    # -----------------------------------------
 
     def create_project(
         self,
@@ -36,10 +51,15 @@ class ProjectService:
             notes=project_data.notes,
         )
 
-        # Save the project
-        project = self.repository.create(db, project)
+
+        project = self.repository.create(
+            db,
+            project
+        )
+
 
         # Create activity log automatically
+
         log_activity(
             db=db,
             project_id=project.id,
@@ -47,10 +67,25 @@ class ProjectService:
             activity=f"Project '{project.title}' created",
         )
 
+
         return project
 
-    def get_projects(self, db: Session):
+
+    # -----------------------------------------
+    # Get All Projects - Admin
+    # -----------------------------------------
+
+    def get_projects(
+        self,
+        db: Session
+    ):
+
         return self.repository.get_all(db)
+
+
+    # -----------------------------------------
+    # Get Project - Admin
+    # -----------------------------------------
 
     def get_project(
         self,
@@ -58,12 +93,23 @@ class ProjectService:
         project_id: int,
     ):
 
-        project = self.repository.get_by_id(db, project_id)
+        project = self.repository.get_by_id(
+            db,
+            project_id
+        )
+
 
         if not project:
+
             raise ProjectNotFoundException()
 
+
         return project
+
+
+    # -----------------------------------------
+    # Update Project - Admin
+    # -----------------------------------------
 
     def update_project(
         self,
@@ -72,17 +118,40 @@ class ProjectService:
         project_data: ProjectUpdate,
     ):
 
-        project = self.repository.get_by_id(db, project_id)
+        project = self.repository.get_by_id(
+            db,
+            project_id
+        )
+
 
         if not project:
+
             raise ProjectNotFoundException()
 
-        update_data = project_data.model_dump(exclude_unset=True)
+
+        update_data = project_data.model_dump(
+            exclude_unset=True
+        )
+
 
         for key, value in update_data.items():
-            setattr(project, key, value)
 
-        return self.repository.update(db, project)
+            setattr(
+                project,
+                key,
+                value
+            )
+
+
+        return self.repository.update(
+            db,
+            project
+        )
+
+
+    # -----------------------------------------
+    # Delete Project - Admin
+    # -----------------------------------------
 
     def delete_project(
         self,
@@ -90,13 +159,63 @@ class ProjectService:
         project_id: int,
     ):
 
-        project = self.repository.get_by_id(db, project_id)
+        project = self.repository.get_by_id(
+            db,
+            project_id
+        )
+
 
         if not project:
+
             raise ProjectNotFoundException()
 
-        self.repository.delete(db, project)
+
+        self.repository.delete(
+            db,
+            project
+        )
+
 
         return {
             "message": "Project deleted successfully"
         }
+
+
+    # -----------------------------------------
+    # Get Client Projects
+    # -----------------------------------------
+
+    def get_client_projects(
+        self,
+        db: Session,
+        user: User,
+    ):
+
+        # -----------------------------------------
+        # Find Client using authenticated email
+        # -----------------------------------------
+
+        email = user.email.lower()
+
+
+        client = (
+            self.client_repository.get_by_email(
+                db,
+                email
+            )
+        )
+
+
+        if not client:
+
+            raise ClientNotFoundException()
+
+
+        # -----------------------------------------
+        # Get ONLY this client's projects
+        # -----------------------------------------
+
+        return self.repository.get_by_client_id(
+            db,
+            client.id
+        )

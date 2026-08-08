@@ -7,11 +7,19 @@ function CrudModal({
   onSave,
   onClose,
 }) {
+
   if (!isOpen) return null;
+
 
   const handleChange = (e) => {
 
-    const { name, value, type, checked } = e.target;
+    const {
+      name,
+      value,
+      type,
+      checked,
+    } = e.target;
+
 
     setFormData({
       ...formData,
@@ -23,6 +31,7 @@ function CrudModal({
 
   };
 
+
   return (
 
     <div className="fixed inset-0 bg-black/60 flex justify-center items-center z-50">
@@ -33,6 +42,7 @@ function CrudModal({
           {title}
         </h2>
 
+
         <div className="space-y-5">
 
           {fields.map((field) => (
@@ -40,10 +50,9 @@ function CrudModal({
             <div key={field.name}>
 
               <label className="block text-gray-300 mb-2">
-
                 {field.label}
-
               </label>
+
 
               {/* Select */}
 
@@ -51,7 +60,7 @@ function CrudModal({
 
                 <select
                   name={field.name}
-                  value={formData[field.name]}
+                  value={formData[field.name] ?? ""}
                   onChange={handleChange}
                   className="w-full bg-[#0D1117] border border-zinc-700 rounded-lg px-4 py-3 text-white"
                 >
@@ -60,7 +69,8 @@ function CrudModal({
                     Select...
                   </option>
 
-                  {field.options.map((option) => (
+
+                  {field.options?.map((option) => (
 
                     <option
                       key={option.value}
@@ -75,6 +85,7 @@ function CrudModal({
 
               )}
 
+
               {/* Textarea */}
 
               {field.type === "textarea" && (
@@ -82,12 +93,13 @@ function CrudModal({
                 <textarea
                   rows="4"
                   name={field.name}
-                  value={formData[field.name]}
+                  value={formData[field.name] ?? ""}
                   onChange={handleChange}
                   className="w-full bg-[#0D1117] border border-zinc-700 rounded-lg px-4 py-3 text-white"
                 />
 
               )}
+
 
               {/* Checkbox */}
 
@@ -98,7 +110,9 @@ function CrudModal({
                   <input
                     type="checkbox"
                     name={field.name}
-                    checked={formData[field.name]}
+                    checked={
+                      formData[field.name] ?? false
+                    }
                     onChange={handleChange}
                   />
 
@@ -110,14 +124,22 @@ function CrudModal({
 
               )}
 
-              {/* Normal Input */}
 
-              {!field.type && (
+              {/* Normal Inputs
+                  Supports text, email, password,
+                  number, date, etc.
+              */}
+
+              {![
+                "select",
+                "textarea",
+                "checkbox",
+              ].includes(field.type) && (
 
                 <input
-                  type="text"
+                  type={field.type || "text"}
                   name={field.name}
-                  value={formData[field.name]}
+                  value={formData[field.name] ?? ""}
                   onChange={handleChange}
                   className="w-full bg-[#0D1117] border border-zinc-700 rounded-lg px-4 py-3 text-white"
                 />
@@ -130,6 +152,7 @@ function CrudModal({
 
         </div>
 
+
         <div className="flex justify-end gap-4 mt-8">
 
           <button
@@ -138,6 +161,7 @@ function CrudModal({
           >
             Cancel
           </button>
+
 
           <button
             onClick={onSave}
@@ -155,5 +179,6 @@ function CrudModal({
   );
 
 }
+
 
 export default CrudModal;

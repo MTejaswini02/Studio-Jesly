@@ -45,7 +45,7 @@ function Hero() {
           
 
           <NavLink
-            to="/contact"
+            to="/signup"
             className="border border-yellow-500 text-white w-full sm:w-auto px-8 py-4 text-center rounded-xl hover:bg-yellow-500 hover:text-black duration-300"
           >
             Work With Us

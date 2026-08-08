@@ -1,28 +1,48 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
+
 from app.core.auth import get_current_user
 from app.database.database import get_db
 from app.models.user import User
-from app.schemas.user_schema import UserCreate, UserResponse, UserUpdate, Token
+
+from app.schemas.user_schema import (
+    UserCreate,
+    UserResponse,
+    UserUpdate,
+    Token,
+    GoogleLoginRequest,
+    ClientSignup,
+)
+
 from app.services.user_service import UserService
 from app.core.permissions import require_admin
 from app.common.helpers import success_response
+
 
 router = APIRouter(
     prefix="/users",
     tags=["Users"]
 )
 
+
 user_service = UserService()
 
+
+# -----------------------------------------
+# Create User
+# -----------------------------------------
 
 @router.post("/")
 def create_user(
     user: UserCreate,
     db: Session = Depends(get_db)
 ):
-    created_user = user_service.create_user(db, user)
+
+    created_user = user_service.create_user(
+        db,
+        user
+    )
 
     return success_response(
         message="User created successfully",
@@ -30,25 +50,89 @@ def create_user(
     )
 
 
-@router.get("/", response_model=list[UserResponse])
+# -----------------------------------------
+# Client Signup
+# -----------------------------------------
+
+@router.post(
+    "/signup",
+    response_model=UserResponse
+)
+def client_signup(
+    user: ClientSignup,
+    db: Session = Depends(get_db),
+):
+
+    return user_service.create_client(
+        db,
+        user
+    )
+
+
+# -----------------------------------------
+# Google Client Signup
+# -----------------------------------------
+
+@router.post(
+    "/google-signup",
+    response_model=Token
+)
+def google_signup(
+    data: GoogleLoginRequest,
+    db: Session = Depends(get_db),
+):
+
+    return user_service.signup_with_google(
+        db,
+        data.google_token,
+    )
+
+
+# -----------------------------------------
+# Get Users
+# -----------------------------------------
+
+@router.get(
+    "/",
+    response_model=list[UserResponse]
+)
 def get_users(
     db: Session = Depends(get_db),
     current_user: User = Depends(require_admin),
 ):
+
     return user_service.get_users(db)
 
-@router.get("/me", response_model=UserResponse)
+
+# -----------------------------------------
+# Current User
+# -----------------------------------------
+
+@router.get(
+    "/me",
+    response_model=UserResponse
+)
 def get_me(
     current_user: User = Depends(get_current_user),
 ):
+
     return current_user
 
-@router.put("/{user_id}", response_model=UserResponse)
+
+# -----------------------------------------
+# Update User
+# -----------------------------------------
+
+@router.put(
+    "/{user_id}",
+    response_model=UserResponse
+)
 def update_user(
     user_id: int,
     user: UserUpdate,
     db: Session = Depends(get_db)
 ):
+
     return user_service.update_user(
         db,
         user_id,
@@ -56,23 +140,58 @@ def update_user(
     )
 
 
-@router.delete("/{user_id}")
+# -----------------------------------------
+# Delete User
+# -----------------------------------------
+
+@router.delete(
+    "/{user_id}"
+)
 def delete_user(
     user_id: int,
     db: Session = Depends(get_db)
 ):
+
     return user_service.delete_user(
         db,
         user_id
     )
 
-@router.post("/login", response_model=Token)
+
+# -----------------------------------------
+# Email + Password Login
+# -----------------------------------------
+
+@router.post(
+    "/login",
+    response_model=Token
+)
 def login(
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db),
 ):
+
     return user_service.login_user(
         db,
-        form_data.username,   # username will contain the email
+        form_data.username,
         form_data.password,
+    )
+
+
+# -----------------------------------------
+# Google Login
+# -----------------------------------------
+
+@router.post(
+    "/google-login",
+    response_model=Token
+)
+def google_login(
+    data: GoogleLoginRequest,
+    db: Session = Depends(get_db),
+):
+
+    return user_service.login_with_google(
+        db,
+        data.google_token,
     )

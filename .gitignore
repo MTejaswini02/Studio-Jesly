@@ -1,25 +1,37 @@
 # Python
+
 Backend/venv/
-Backend/__pycache__/
+Backend/**/__pycache__/
+Backend/**/*.pyc
 Backend/.pytest_cache/
-Backend/*.pyc
 
 # Environment Variables
+
 Backend/.env
+Frontend/.env
+
+# Uploaded Files
+
+Backend/uploads/
 
 # Node
+
 Frontend/node_modules/
 
 # Vite
+
 Frontend/dist/
 
 # OS Files
+
 .DS_Store
 Thumbs.db
 
 # IDE
+
 .vscode/
 .idea/
 
 # Logs
+
 *.log

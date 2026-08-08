@@ -22,7 +22,7 @@ function CTA() {
 
         <Link
 
-          to="/contact"
+          to="/signup"
 
           className="inline-block mt-12 bg-black text-white px-10 py-4 rounded-xl font-semibold hover:scale-105 duration-300"
 

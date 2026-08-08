@@ -6,15 +6,30 @@ from fastapi import (
     Form,
     HTTPException,
 )
+
+from fastapi.responses import FileResponse
+
 from sqlalchemy.orm import Session
-from app.core.permissions import require_admin
+
+from app.core.permissions import (
+    require_admin,
+    require_client,
+)
+
 from app.database.database import get_db
+
+from app.models.user import User
+
 from app.schemas.project_file_schema import (
     ProjectFileCreate,
     ProjectFileUpdate,
     ProjectFileResponse,
 )
-from app.services.project_file_service import ProjectFileService
+
+from app.services.project_file_service import (
+    ProjectFileService,
+)
+
 import os
 import shutil
 
@@ -24,7 +39,13 @@ router = APIRouter(
     tags=["Project Files"],
 )
 
+
 project_file_service = ProjectFileService()
+
+
+# =========================================
+# ADMIN ROUTES
+# =========================================
 
 
 @router.post(
@@ -36,6 +57,7 @@ def create_file(
     project_file: ProjectFileCreate,
     db: Session = Depends(get_db),
 ):
+
     return project_file_service.create_file(
         db,
         project_file,
@@ -50,6 +72,7 @@ def create_file(
 def get_files(
     db: Session = Depends(get_db),
 ):
+
     return project_file_service.get_files(db)
 
 
@@ -62,6 +85,7 @@ def get_project_files(
     project_id: int,
     db: Session = Depends(get_db),
 ):
+
     return project_file_service.get_project_files(
         db,
         project_id,
@@ -77,6 +101,7 @@ def get_file(
     file_id: int,
     db: Session = Depends(get_db),
 ):
+
     return project_file_service.get_file(
         db,
         file_id,
@@ -93,6 +118,7 @@ def update_file(
     project_file: ProjectFileUpdate,
     db: Session = Depends(get_db),
 ):
+
     return project_file_service.update_file(
         db,
         file_id,
@@ -108,10 +134,18 @@ def delete_file(
     file_id: int,
     db: Session = Depends(get_db),
 ):
+
     return project_file_service.delete_file(
         db,
         file_id,
     )
+
+
+# =========================================
+# ADMIN - UPLOAD
+# =========================================
+
+
 @router.post(
     "/upload",
     response_model=ProjectFileResponse,
@@ -123,20 +157,32 @@ def upload_project_file(
     db: Session = Depends(get_db),
 ):
 
-    upload_directory = f"uploads/projects/{project_id}"
+    upload_directory = (
+        f"uploads/projects/{project_id}"
+    )
 
-    os.makedirs(upload_directory, exist_ok=True)
+    os.makedirs(
+        upload_directory,
+        exist_ok=True,
+    )
+
 
     file_path = os.path.join(
         upload_directory,
         file.filename,
     )
 
-    with open(file_path, "wb") as buffer:
+
+    with open(
+        file_path,
+        "wb",
+    ) as buffer:
+
         shutil.copyfileobj(
             file.file,
             buffer,
         )
+
 
     project_file = ProjectFileCreate(
         project_id=project_id,
@@ -144,7 +190,72 @@ def upload_project_file(
         file_path=file_path,
     )
 
+
     return project_file_service.create_file(
         db,
         project_file,
+    )
+
+
+# =========================================
+# CLIENT ROUTES
+# =========================================
+
+
+# -----------------------------------------
+# Client - Get Own Project Files
+# -----------------------------------------
+
+@router.get(
+    "/client/project/{project_id}",
+    response_model=list[ProjectFileResponse],
+    dependencies=[Depends(require_client)],
+)
+def get_client_project_files(
+    project_id: int,
+    current_user: User = Depends(require_client),
+    db: Session = Depends(get_db),
+):
+
+    return project_file_service.get_client_project_files(
+        db,
+        current_user,
+        project_id,
+    )
+
+
+# -----------------------------------------
+# Client - Open Own File
+# -----------------------------------------
+
+@router.get(
+    "/client/file/{file_id}",
+    dependencies=[Depends(require_client)],
+)
+def get_client_file(
+    file_id: int,
+    current_user: User = Depends(require_client),
+    db: Session = Depends(get_db),
+):
+
+    project_file = project_file_service.get_client_file(
+        db,
+        current_user,
+        file_id,
+    )
+
+
+    if not os.path.isfile(
+        project_file.file_path
+    ):
+
+        raise HTTPException(
+            status_code=404,
+            detail="File not found on server.",
+        )
+
+
+    return FileResponse(
+        path=project_file.file_path,
+        filename=project_file.file_name,
     )

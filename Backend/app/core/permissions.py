@@ -4,11 +4,22 @@ from app.core.auth import get_current_user
 from app.models.user import User
 
 
+# =========================================
+# Admin Permission
+# =========================================
+
 def require_admin(
     current_user: User = Depends(get_current_user),
 ):
 
-    if current_user.role != "Admin":
+    if not current_user.role:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Admin access required",
+        )
+
+    if current_user.role.strip().lower() != "admin":
+
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Admin access required",
@@ -17,11 +28,22 @@ def require_admin(
     return current_user
 
 
+# =========================================
+# Client Permission
+# =========================================
+
 def require_client(
     current_user: User = Depends(get_current_user),
 ):
 
-    if current_user.role != "Client":
+    if not current_user.role:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Client access required",
+        )
+
+    if current_user.role.strip().lower() != "client":
+
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Client access required",

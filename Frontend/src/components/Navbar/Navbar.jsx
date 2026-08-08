@@ -78,7 +78,7 @@ function Navbar() {
         <div className="flex items-center gap-4">
 
           <NavLink
-            to="/contact"
+            to="/signup"
             className={({ isActive }) =>
               isActive
                 ? "hidden md:block bg-yellow-600 text-black px-6 py-3 rounded-xl font-semibold"

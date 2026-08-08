@@ -1,15 +1,23 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 
 from app.models.project_file import ProjectFile
+from app.models.project import Project
+from app.models.client import Client
+
 from app.repositories.project_file_repository import (
     ProjectFileRepository,
 )
+
 from app.schemas.project_file_schema import (
     ProjectFileCreate,
     ProjectFileUpdate,
 )
+
 from app.exceptions.exceptions import (
     ProjectFileNotFoundException,
+    ClientNotFoundException,
+    ProjectNotFoundException,
 )
 
 
@@ -17,6 +25,11 @@ class ProjectFileService:
 
     def __init__(self):
         self.repository = ProjectFileRepository()
+
+
+    # -----------------------------------------
+    # Admin - Create File
+    # -----------------------------------------
 
     def create_file(
         self,
@@ -35,18 +48,38 @@ class ProjectFileService:
             project_file,
         )
 
-    def get_files(self, db: Session):
+
+    # -----------------------------------------
+    # Admin - Get All Files
+    # -----------------------------------------
+
+    def get_files(
+        self,
+        db: Session,
+    ):
+
         return self.repository.get_all(db)
+
+
+    # -----------------------------------------
+    # Admin - Get Project Files
+    # -----------------------------------------
 
     def get_project_files(
         self,
         db: Session,
         project_id: int,
     ):
+
         return self.repository.get_by_project(
             db,
             project_id,
         )
+
+
+    # -----------------------------------------
+    # Admin - Get Single File
+    # -----------------------------------------
 
     def get_file(
         self,
@@ -63,6 +96,11 @@ class ProjectFileService:
             raise ProjectFileNotFoundException()
 
         return project_file
+
+
+    # -----------------------------------------
+    # Admin - Update File
+    # -----------------------------------------
 
     def update_file(
         self,
@@ -91,6 +129,11 @@ class ProjectFileService:
             project_file,
         )
 
+
+    # -----------------------------------------
+    # Admin - Delete File
+    # -----------------------------------------
+
     def delete_file(
         self,
         db: Session,
@@ -113,3 +156,90 @@ class ProjectFileService:
         return {
             "message": "Project file deleted successfully"
         }
+
+
+    # =========================================
+    # Client - Get Own Project Files
+    # =========================================
+
+    def get_client_project_files(
+        self,
+        db: Session,
+        current_user,
+        project_id: int,
+    ):
+
+        client = (
+            db.query(Client)
+            .filter(
+                func.lower(Client.email)
+                == func.lower(current_user.email)
+            )
+            .first()
+        )
+
+        if not client:
+            raise ClientNotFoundException()
+
+
+        project = (
+            db.query(Project)
+            .filter(
+                Project.id == project_id,
+                Project.client_id == client.id,
+            )
+            .first()
+        )
+
+        if not project:
+            raise ProjectNotFoundException()
+
+
+        return self.repository.get_by_project(
+            db,
+            project.id,
+        )
+
+
+    # =========================================
+    # Client - Get Own File
+    # =========================================
+
+    def get_client_file(
+        self,
+        db: Session,
+        current_user,
+        file_id: int,
+    ):
+
+        client = (
+            db.query(Client)
+            .filter(
+                func.lower(Client.email)
+                == func.lower(current_user.email)
+            )
+            .first()
+        )
+
+        if not client:
+            raise ClientNotFoundException()
+
+
+        project_file = (
+            db.query(ProjectFile)
+            .join(
+                Project,
+                Project.id == ProjectFile.project_id,
+            )
+            .filter(
+                ProjectFile.id == file_id,
+                Project.client_id == client.id,
+            )
+            .first()
+        )
+
+        if not project_file:
+            raise ProjectFileNotFoundException()
+
+
+        return project_file

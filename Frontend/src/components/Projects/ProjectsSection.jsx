@@ -13,6 +13,7 @@ import { getUsers } from "../../api/userApi";
 
 import Button from "../Common/Button";
 
+
 function ProjectsSection() {
 
   const emptyForm = {
@@ -35,6 +36,7 @@ function ProjectsSection() {
     notes: "",
   };
 
+
   const [projects, setProjects] = useState([]);
   const [clients, setClients] = useState([]);
   const [services, setServices] = useState([]);
@@ -46,35 +48,31 @@ function ProjectsSection() {
 
   const [formData, setFormData] = useState(emptyForm);
 
+
+  // -----------------------------------------
+  // Load Data
+  // -----------------------------------------
+
   const loadData = async () => {
 
     try {
 
       const [
-
         projectRes,
         clientRes,
         serviceRes,
         userRes,
-
       ] = await Promise.all([
-
         getProjects(),
-
         getClients(),
-
         getServices(),
-
         getUsers(),
-
       ]);
 
+
       setProjects(projectRes.data);
-
       setClients(clientRes.data);
-
       setServices(serviceRes.data);
-
       setUsers(userRes.data);
 
     } catch (error) {
@@ -85,13 +83,21 @@ function ProjectsSection() {
 
   };
 
-   useEffect(() => {
+
+  useEffect(() => {
+
     const fetchData = async () => {
       await loadData();
     };
 
     fetchData();
+
   }, []);
+
+
+  // -----------------------------------------
+  // Get Client Name
+  // -----------------------------------------
 
   const getClientName = (id) => {
 
@@ -99,9 +105,16 @@ function ProjectsSection() {
       (item) => item.id === id
     );
 
-    return client ? client.full_name : "-";
+    return client
+      ? client.full_name
+      : "-";
 
   };
+
+
+  // -----------------------------------------
+  // Get Service Name
+  // -----------------------------------------
 
   const getServiceName = (id) => {
 
@@ -109,9 +122,16 @@ function ProjectsSection() {
       (item) => item.id === id
     );
 
-    return service ? service.name : "-";
+    return service
+      ? service.name
+      : "-";
 
   };
+
+
+  // -----------------------------------------
+  // Get User Name
+  // -----------------------------------------
 
   const getUserName = (id) => {
 
@@ -119,13 +139,24 @@ function ProjectsSection() {
       (item) => item.id === id
     );
 
-    return user ? user.full_name : "-";
+    return user
+      ? user.full_name
+      : "-";
 
   };
 
-    const handleInputChange = (e) => {
 
-    const { name, value } = e.target;
+  // -----------------------------------------
+  // Handle Input
+  // -----------------------------------------
+
+  const handleInputChange = (e) => {
+
+    const {
+      name,
+      value
+    } = e.target;
+
 
     setFormData((prev) => ({
       ...prev,
@@ -134,43 +165,87 @@ function ProjectsSection() {
 
   };
 
+
+  // -----------------------------------------
+  // Add Project
+  // -----------------------------------------
+
   const handleAdd = () => {
 
     setEditingId(null);
 
-    setFormData(emptyForm);
-
-    setShowForm(true);
-
-  };
-
-  const handleEdit = (project) => {
-
-    setEditingId(project.id);
-
     setFormData({
-      project_code: project.project_code,
-      title: project.title,
-      description: project.description || "",
-
-      client_id: project.client_id,
-      service_id: project.service_id,
-      assigned_to: project.assigned_to,
-
-      status: project.status,
-      priority: project.priority,
-
-      estimated_hours: project.estimated_hours || "",
-
-      start_date: project.start_date || "",
-      due_date: project.due_date || "",
-
-      notes: project.notes || "",
+      ...emptyForm
     });
 
     setShowForm(true);
 
   };
+
+
+  // -----------------------------------------
+  // Edit Project
+  // -----------------------------------------
+
+  const handleEdit = (project) => {
+
+    setEditingId(project.id);
+
+
+    setFormData({
+
+      project_code:
+        project.project_code,
+
+      title:
+        project.title,
+
+      description:
+        project.description || "",
+
+
+      client_id:
+        project.client_id,
+
+      service_id:
+        project.service_id,
+
+      assigned_to:
+        project.assigned_to,
+
+
+      status:
+        project.status,
+
+      priority:
+        project.priority,
+
+
+      estimated_hours:
+        project.estimated_hours ?? "",
+
+
+      start_date:
+        project.start_date || "",
+
+      due_date:
+        project.due_date || "",
+
+
+      notes:
+        project.notes || "",
+
+    });
+
+
+    setShowForm(true);
+
+  };
+
+
+  // -----------------------------------------
+  // Cancel
+  // -----------------------------------------
 
   const handleCancel = () => {
 
@@ -178,24 +253,88 @@ function ProjectsSection() {
 
     setEditingId(null);
 
-    setFormData(emptyForm);
+    setFormData({
+      ...emptyForm
+    });
 
   };
+
+
+  // -----------------------------------------
+  // Save Project
+  // -----------------------------------------
 
   const handleSave = async () => {
 
     try {
 
+      // Convert frontend form values
+      // into the types expected by FastAPI.
+
       const payload = {
-        ...formData,
-        client_id: Number(formData.client_id),
-        service_id: Number(formData.service_id),
-        assigned_to: Number(formData.assigned_to),
+
+        project_code:
+          formData.project_code.trim(),
+
+        title:
+          formData.title.trim(),
+
+        description:
+          formData.description.trim()
+            ? formData.description.trim()
+            : null,
+
+
+        client_id:
+          Number(formData.client_id),
+
+        service_id:
+          Number(formData.service_id),
+
+        assigned_to:
+          Number(formData.assigned_to),
+
+
+        status:
+          formData.status,
+
+        priority:
+          formData.priority,
+
+
         estimated_hours:
           formData.estimated_hours === ""
             ? null
             : Number(formData.estimated_hours),
+
+
+        // IMPORTANT:
+        // Empty date strings must become null.
+
+        start_date:
+          formData.start_date === ""
+            ? null
+            : formData.start_date,
+
+        due_date:
+          formData.due_date === ""
+            ? null
+            : formData.due_date,
+
+
+        notes:
+          formData.notes.trim()
+            ? formData.notes.trim()
+            : null,
+
       };
+
+
+      console.log(
+        "Project payload:",
+        payload
+      );
+
 
       if (editingId) {
 
@@ -206,31 +345,56 @@ function ProjectsSection() {
 
       } else {
 
-        await createProject(payload);
+        await createProject(
+          payload
+        );
 
       }
+
 
       await loadData();
 
       handleCancel();
 
+
     } catch (error) {
 
-      console.error(error);
+      console.error(
+        "Project save error:",
+        error
+      );
 
-      alert("Failed to save project.");
+
+      console.error(
+        "Backend response:",
+        error?.response?.data
+      );
+
+
+      alert(
+        error?.response?.data?.detail ||
+        "Failed to save project."
+      );
 
     }
 
   };
 
+
+  // -----------------------------------------
+  // Delete Project
+  // -----------------------------------------
+
   const handleDelete = async (id) => {
 
-    const confirmed = window.confirm(
-      "Delete this project?"
-    );
+    const confirmed =
+      window.confirm(
+        "Delete this project?"
+      );
+
 
     if (!confirmed) return;
+
 
     try {
 
@@ -242,18 +406,25 @@ function ProjectsSection() {
 
       console.error(error);
 
-      alert("Failed to delete project.");
+      alert(
+        error?.response?.data?.detail ||
+        "Failed to delete project."
+      );
 
     }
 
   };
 
-    return (
+
+  return (
+
     <>
 
-      <div className="flex justify-between items-center mb-6">
+      {/* -----------------------------------------
+          Add Project Button
+      ----------------------------------------- */}
 
-        
+      <div className="flex justify-between items-center mb-6">
 
         <Button
           variant="primary"
@@ -263,6 +434,11 @@ function ProjectsSection() {
         </Button>
 
       </div>
+
+
+      {/* -----------------------------------------
+          Project Form
+      ----------------------------------------- */}
 
       {showForm && (
 
@@ -276,7 +452,11 @@ function ProjectsSection() {
 
           </h2>
 
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+
+            {/* Project Code */}
 
             <div>
 
@@ -294,6 +474,9 @@ function ProjectsSection() {
 
             </div>
 
+
+            {/* Project Title */}
+
             <div>
 
               <label className="block text-gray-300 mb-2">
@@ -309,6 +492,9 @@ function ProjectsSection() {
               />
 
             </div>
+
+
+            {/* Client */}
 
             <div>
 
@@ -327,6 +513,7 @@ function ProjectsSection() {
                   Select Client
                 </option>
 
+
                 {clients.map((client) => (
 
                   <option
@@ -341,6 +528,9 @@ function ProjectsSection() {
               </select>
 
             </div>
+
+
+            {/* Service */}
 
             <div>
 
@@ -359,6 +549,7 @@ function ProjectsSection() {
                   Select Service
                 </option>
 
+
                 {services.map((service) => (
 
                   <option
@@ -373,6 +564,9 @@ function ProjectsSection() {
               </select>
 
             </div>
+
+
+            {/* Assigned To */}
 
             <div>
 
@@ -391,6 +585,7 @@ function ProjectsSection() {
                   Select User
                 </option>
 
+
                 {users.map((user) => (
 
                   <option
@@ -406,6 +601,9 @@ function ProjectsSection() {
 
             </div>
 
+
+            {/* Status */}
+
             <div>
 
               <label className="block text-gray-300 mb-2">
@@ -419,13 +617,24 @@ function ProjectsSection() {
                 className="w-full bg-[#0D1117] border border-zinc-700 rounded-lg p-3 text-white"
               >
 
-                <option>Pending</option>
-                <option>In Progress</option>
-                <option>Completed</option>
+                <option value="Pending">
+                  Pending
+                </option>
+
+                <option value="In Progress">
+                  In Progress
+                </option>
+
+                <option value="Completed">
+                  Completed
+                </option>
 
               </select>
 
             </div>
+
+
+            {/* Priority */}
 
             <div>
 
@@ -440,13 +649,24 @@ function ProjectsSection() {
                 className="w-full bg-[#0D1117] border border-zinc-700 rounded-lg p-3 text-white"
               >
 
-                <option>Low</option>
-                <option>Medium</option>
-                <option>High</option>
+                <option value="Low">
+                  Low
+                </option>
+
+                <option value="Medium">
+                  Medium
+                </option>
+
+                <option value="High">
+                  High
+                </option>
 
               </select>
 
             </div>
+
+
+            {/* Estimated Hours */}
 
             <div>
 
@@ -464,6 +684,9 @@ function ProjectsSection() {
 
             </div>
 
+
+            {/* Start Date */}
+
             <div>
 
               <label className="block text-gray-300 mb-2">
@@ -479,6 +702,9 @@ function ProjectsSection() {
               />
 
             </div>
+
+
+            {/* Due Date */}
 
             <div>
 
@@ -498,6 +724,9 @@ function ProjectsSection() {
 
           </div>
 
+
+          {/* Description */}
+
           <div className="mt-6">
 
             <label className="block text-gray-300 mb-2">
@@ -513,6 +742,9 @@ function ProjectsSection() {
             />
 
           </div>
+
+
+          {/* Notes */}
 
           <div className="mt-6">
 
@@ -530,6 +762,9 @@ function ProjectsSection() {
 
           </div>
 
+
+          {/* Buttons */}
+
           <div className="flex justify-end gap-4 mt-8">
 
             <Button
@@ -538,6 +773,7 @@ function ProjectsSection() {
             >
               Cancel
             </Button>
+
 
             <Button
               variant="primary"
@@ -554,7 +790,12 @@ function ProjectsSection() {
 
       )}
 
-            <div className="bg-[#161B22] rounded-xl overflow-hidden">
+
+      {/* -----------------------------------------
+          Projects Table
+      ----------------------------------------- */}
+
+      <div className="bg-[#161B22] rounded-xl overflow-hidden">
 
         <table className="w-full">
 
@@ -598,6 +839,7 @@ function ProjectsSection() {
 
           </thead>
 
+
           <tbody>
 
             {projects.length === 0 ? (
@@ -631,15 +873,21 @@ function ProjectsSection() {
                   </td>
 
                   <td className="p-4 text-gray-300">
-                    {getClientName(project.client_id)}
+                    {getClientName(
+                      project.client_id
+                    )}
                   </td>
 
                   <td className="p-4 text-gray-300">
-                    {getServiceName(project.service_id)}
+                    {getServiceName(
+                      project.service_id
+                    )}
                   </td>
 
                   <td className="p-4 text-gray-300">
-                    {getUserName(project.assigned_to)}
+                    {getUserName(
+                      project.assigned_to
+                    )}
                   </td>
 
                   <td className="p-4">
@@ -678,14 +926,18 @@ function ProjectsSection() {
 
                     <Button
                       variant="edit"
-                      onClick={() => handleEdit(project)}
+                      onClick={() =>
+                        handleEdit(project)
+                      }
                     >
                       Edit
                     </Button>
 
                     <Button
                       variant="delete"
-                      onClick={() => handleDelete(project.id)}
+                      onClick={() =>
+                        handleDelete(project.id)
+                      }
                     >
                       Delete
                     </Button>
@@ -709,5 +961,6 @@ function ProjectsSection() {
   );
 
 }
+
 
 export default ProjectsSection;

@@ -5,27 +5,70 @@ from app.models.project import Project
 
 class ProjectRepository:
 
-    def create(self, db: Session, project: Project):
+    def create(
+        self,
+        db: Session,
+        project: Project
+    ):
+
         db.add(project)
         db.commit()
         db.refresh(project)
+
         return project
 
-    def get_all(self, db: Session):
+
+    def get_all(
+        self,
+        db: Session
+    ):
+
         return db.query(Project).all()
 
-    def get_by_id(self, db: Session, project_id: int):
+
+    def get_by_id(
+        self,
+        db: Session,
+        project_id: int
+    ):
+
         return (
             db.query(Project)
             .filter(Project.id == project_id)
             .first()
         )
 
-    def update(self, db: Session, project: Project):
+
+    def get_by_client_id(
+        self,
+        db: Session,
+        client_id: int
+    ):
+
+        return (
+            db.query(Project)
+            .filter(Project.client_id == client_id)
+            .all()
+        )
+
+
+    def update(
+        self,
+        db: Session,
+        project: Project
+    ):
+
         db.commit()
         db.refresh(project)
+
         return project
 
-    def delete(self, db: Session, project: Project):
+
+    def delete(
+        self,
+        db: Session,
+        project: Project
+    ):
+
         db.delete(project)
         db.commit()
