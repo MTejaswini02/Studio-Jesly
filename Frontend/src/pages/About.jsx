@@ -3,18 +3,21 @@ import Footer from "../components/Footer/Footer";
 import CTA from "../components/CTA/CTA";
 
 function About() {
-  const values = [
+  const principles = [
     {
+      number: "01",
       title: "Quality",
-      desc: "Every project is crafted with precision and attention to detail."
+      desc: "Every project is crafted with precision, consistency and attention to detail."
     },
     {
+      number: "02",
       title: "Creativity",
-      desc: "Simple, modern and impactful designs that communicate clearly."
+      desc: "We turn ideas into simple, modern and impactful designs that communicate clearly."
     },
     {
+      number: "03",
       title: "Trust",
-      desc: "Building long-term relationships through reliable service."
+      desc: "We build lasting relationships through reliable communication, honest work and dependable service."
     }
   ];
 
@@ -22,7 +25,7 @@ function About() {
     <>
       <Navbar />
 
-      {/* Hero */}
+      {/* ================= HERO ================= */}
 
       <section className="bg-[#0D1117] pt-32 md:pt-36 pb-20 md:pb-24 px-6 md:px-8">
 
@@ -47,14 +50,19 @@ function About() {
 
       </section>
 
-      {/* Story */}
+
+      {/* ================= OUR STORY ================= */}
 
       <section className="bg-[#0D1117] px-6 md:px-8 py-16 md:py-20">
 
         <div className="max-w-5xl mx-auto text-center">
 
-          <h2 className="text-5xl font-bold text-white mb-10">
-            Our Story
+          <p className="uppercase tracking-[4px] text-yellow-500 text-sm mb-5">
+            OUR STORY
+          </p>
+
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-10">
+            Built With Purpose.
           </h2>
 
           <p className="text-zinc-400 leading-9 text-lg">
@@ -68,27 +76,68 @@ function About() {
 
       </section>
 
-      {/* Values */}
 
-      <section className="bg-[#0D1117] px-6 md:px-8 pb-20 md:pb-28">
+      {/* ================= PRINCIPLES ================= */}
+
+      <section className="bg-[#0D1117] px-6 md:px-8 py-20 md:py-28">
 
         <div className="max-w-7xl mx-auto">
 
+          <div className="text-center mb-16">
+
+            <p className="uppercase tracking-[4px] text-yellow-500 text-sm mb-5">
+              OUR PRINCIPLES
+            </p>
+
+            <h2 className="text-4xl md:text-5xl font-bold text-white">
+              What We Stand For.
+            </h2>
+
+            <p className="text-zinc-400 text-lg max-w-2xl mx-auto mt-6 leading-8">
+              The principles behind every project, interaction and
+              relationship at Studio Jesly.
+            </p>
+
+          </div>
+
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
 
-            {values.map((value, index) => (
+            {principles.map((principle) => (
 
               <div
-                key={index}
-                className="bg-[#161B22] border border-zinc-800 rounded-3xl p-8 md:p-10 hover:-translate-y-2 duration-300"
+                key={principle.number}
+                className="
+                  group
+                  bg-[#161B22]
+                  border border-zinc-800
+                  rounded-3xl
+                  p-8 md:p-10
+                  hover:-translate-y-2
+                  hover:border-yellow-500/40
+                  transition-all
+                  duration-300
+                "
               >
 
-                <h3 className="text-3xl font-bold text-white mb-6">
-                  {value.title}
+                <div className="flex items-center justify-between mb-10">
+
+                  <span className="text-yellow-500 text-sm font-semibold tracking-[3px]">
+                    {principle.number}
+                  </span>
+
+                  <div className="h-px bg-zinc-800 flex-1 ml-6 group-hover:bg-yellow-500/40 transition-colors duration-300" />
+
+                </div>
+
+
+                <h3 className="text-white text-3xl font-bold mb-5">
+                  {principle.title}
                 </h3>
 
+
                 <p className="text-zinc-400 leading-8">
-                  {value.desc}
+                  {principle.desc}
                 </p>
 
               </div>
@@ -100,6 +149,9 @@ function About() {
         </div>
 
       </section>
+
+
+      {/* ================= CTA ================= */}
 
       <CTA />
 

@@ -13,7 +13,6 @@ import {
 import { createContact } from "../api/contactApi";
 
 function Contact() {
-
   const [formData, setFormData] = useState({
     full_name: "",
     email: "",
@@ -24,22 +23,18 @@ function Contact() {
   const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (e) => {
-
     const { name, value } = e.target;
 
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
-
   };
 
   const handleSubmit = async (e) => {
-
     e.preventDefault();
 
     try {
-
       setSubmitting(true);
 
       await createContact(formData);
@@ -52,13 +47,8 @@ function Contact() {
         project_type: "",
         message: "",
       });
-
     } catch (error) {
-
-      console.error(
-        "Failed to submit contact:",
-        error
-      );
+      console.error("Failed to submit contact:", error);
 
       console.error(
         "Backend response:",
@@ -67,26 +57,20 @@ function Contact() {
 
       alert(
         error?.response?.data?.detail ||
-        "Failed to send your message."
+          "Failed to send your message."
       );
-
     } finally {
-
       setSubmitting(false);
-
     }
-
   };
 
   return (
     <>
-
       <Navbar />
 
-      {/* Hero */}
+      {/* ================= HERO ================= */}
 
       <section className="bg-[#0D1117] pt-32 md:pt-36 pb-20 md:pb-24 px-6 md:px-8">
-
         <div className="max-w-6xl mx-auto text-center">
 
           <p className="uppercase tracking-[5px] text-yellow-500 mb-6">
@@ -94,34 +78,27 @@ function Contact() {
           </p>
 
           <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold text-white leading-tight">
-
             Let's Create
-
             <br />
-
             Something Great.
-
           </h1>
 
           <p className="text-zinc-400 text-lg md:text-xl max-w-3xl mx-auto mt-8 leading-8 md:leading-9">
-
             We'd love to hear about your project.
             Fill in the details below and we'll get back to you.
-
           </p>
 
         </div>
-
       </section>
 
 
-      {/* Contact Section */}
+      {/* ================= CONTACT ================= */}
 
       <section className="bg-[#0D1117] px-6 md:px-8 pb-20 md:pb-28">
 
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14">
 
-          {/* Contact Form */}
+          {/* ================= FORM ================= */}
 
           <div className="bg-[#161B22] rounded-3xl border border-zinc-800 p-6 md:p-10">
 
@@ -141,7 +118,7 @@ function Contact() {
                 value={formData.full_name}
                 onChange={handleChange}
                 required
-                className="w-full bg-[#0D1117] border border-zinc-700 rounded-xl px-5 py-4 text-white outline-none"
+                className="w-full bg-[#0D1117] border border-zinc-700 rounded-xl px-5 py-4 text-white placeholder:text-zinc-500 outline-none transition-all duration-300 focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500/30"
               />
 
               <input
@@ -151,7 +128,7 @@ function Contact() {
                 value={formData.email}
                 onChange={handleChange}
                 required
-                className="w-full bg-[#0D1117] border border-zinc-700 rounded-xl px-5 py-4 text-white outline-none"
+                className="w-full bg-[#0D1117] border border-zinc-700 rounded-xl px-5 py-4 text-white placeholder:text-zinc-500 outline-none transition-all duration-300 focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500/30"
               />
 
               <input
@@ -161,7 +138,7 @@ function Contact() {
                 value={formData.project_type}
                 onChange={handleChange}
                 required
-                className="w-full bg-[#0D1117] border border-zinc-700 rounded-xl px-5 py-4 text-white outline-none"
+                className="w-full bg-[#0D1117] border border-zinc-700 rounded-xl px-5 py-4 text-white placeholder:text-zinc-500 outline-none transition-all duration-300 focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500/30"
               />
 
               <textarea
@@ -171,17 +148,15 @@ function Contact() {
                 value={formData.message}
                 onChange={handleChange}
                 required
-                className="w-full bg-[#0D1117] border border-zinc-700 rounded-xl px-5 py-4 text-white outline-none resize-y"
-              ></textarea>
+                className="w-full bg-[#0D1117] border border-zinc-700 rounded-xl px-5 py-4 text-white placeholder:text-zinc-500 outline-none resize-y transition-all duration-300 focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500/30"
+              />
 
               <button
                 type="submit"
                 disabled={submitting}
-                className="bg-yellow-500 text-black font-semibold px-8 py-4 rounded-xl hover:scale-105 duration-300 w-full sm:w-auto"
+                className="bg-yellow-500 text-black font-semibold px-8 py-4 rounded-xl hover:-translate-y-1 hover:bg-yellow-400 transition-all duration-300 w-full sm:w-auto disabled:opacity-60 disabled:hover:translate-y-0"
               >
-                {submitting
-                  ? "Sending..."
-                  : "Send Message"}
+                {submitting ? "Sending..." : "Send Message"}
               </button>
 
             </form>
@@ -189,7 +164,7 @@ function Contact() {
           </div>
 
 
-          {/* Contact Details */}
+          {/* ================= CONTACT DETAILS ================= */}
 
           <div className="space-y-6">
 
@@ -197,7 +172,7 @@ function Contact() {
 
             <a
               href="mailto:Tejaswinimaddali07@gmail.com"
-              className="bg-[#161B22] rounded-3xl border border-zinc-800 p-6 md:p-10 flex items-center gap-6"
+              className="group bg-[#161B22] rounded-3xl border border-zinc-800 p-6 md:p-10 flex items-center gap-6 hover:-translate-y-1 hover:border-yellow-500/40 transition-all duration-300"
             >
 
               <Mail
@@ -205,13 +180,13 @@ function Contact() {
                 size={32}
               />
 
-              <div>
+              <div className="min-w-0">
 
-                <h3 className="text-white text-xl font-semibold">
+                <h3 className="text-white text-xl font-semibold mb-1">
                   Email
                 </h3>
 
-                <p className="text-zinc-400 break-all">
+                <p className="text-zinc-400 break-all group-hover:text-zinc-300 transition-colors">
                   Tejaswinimaddali07@gmail.com
                 </p>
 
@@ -222,38 +197,34 @@ function Contact() {
 
             {/* Phone */}
 
-            <div>
+            <a
+              href="tel:+917075657239"
+              className="group bg-[#161B22] rounded-3xl border border-zinc-800 p-6 md:p-8 flex items-center gap-6 hover:-translate-y-1 hover:border-yellow-500/40 transition-all duration-300"
+            >
 
-              <a
-                href="tel:+917075657239"
-                className="bg-[#161B22] rounded-3xl border border-zinc-800 p-6 md:p-8 flex items-center gap-6"
-              >
+              <Phone
+                className="text-yellow-500 shrink-0"
+                size={32}
+              />
 
-                <Phone
-                  className="text-yellow-500 shrink-0"
-                  size={32}
-                />
+              <div>
 
-                <div>
+                <h3 className="text-white text-xl font-semibold mb-1">
+                  Phone
+                </h3>
 
-                  <h3 className="text-white text-xl font-semibold">
-                    Phone
-                  </h3>
+                <p className="text-zinc-400 group-hover:text-zinc-300 transition-colors">
+                  +91 7075657239
+                </p>
 
-                  <p className="text-zinc-400">
-                    +91 7075657239
-                  </p>
+              </div>
 
-                </div>
-
-              </a>
-
-            </div>
+            </a>
 
 
             {/* Working Hours */}
 
-            <div className="bg-[#161B22] rounded-3xl border border-zinc-800 p-6 md:p-8 flex items-center gap-6">
+            <div className="bg-[#161B22] rounded-3xl border border-zinc-800 p-6 md:p-8 flex items-center gap-6 hover:-translate-y-1 hover:border-yellow-500/40 transition-all duration-300">
 
               <Clock
                 className="text-yellow-500 shrink-0"
@@ -262,7 +233,7 @@ function Contact() {
 
               <div>
 
-                <h3 className="text-white text-xl font-semibold">
+                <h3 className="text-white text-xl font-semibold mb-1">
                   Working Hours
                 </h3>
 
@@ -277,7 +248,7 @@ function Contact() {
 
             {/* Location */}
 
-            <div className="bg-[#161B22] rounded-3xl border border-zinc-800 p-6 md:p-8 flex items-center gap-6">
+            <div className="bg-[#161B22] rounded-3xl border border-zinc-800 p-6 md:p-8 flex items-center gap-6 hover:-translate-y-1 hover:border-yellow-500/40 transition-all duration-300">
 
               <MapPin
                 className="text-yellow-500 shrink-0"
@@ -286,7 +257,7 @@ function Contact() {
 
               <div>
 
-                <h3 className="text-white text-xl font-semibold">
+                <h3 className="text-white text-xl font-semibold mb-1">
                   Location
                 </h3>
 
@@ -306,7 +277,6 @@ function Contact() {
 
 
       <Footer />
-
     </>
   );
 }

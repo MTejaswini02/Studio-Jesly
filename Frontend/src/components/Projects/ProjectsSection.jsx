@@ -268,9 +268,6 @@ function ProjectsSection() {
 
     try {
 
-      // Convert frontend form values
-      // into the types expected by FastAPI.
-
       const payload = {
 
         project_code:
@@ -307,9 +304,6 @@ function ProjectsSection() {
             ? null
             : Number(formData.estimated_hours),
 
-
-        // IMPORTANT:
-        // Empty date strings must become null.
 
         start_date:
           formData.start_date === ""
@@ -424,7 +418,7 @@ function ProjectsSection() {
           Add Project Button
       ----------------------------------------- */}
 
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
 
         <Button
           variant="primary"
@@ -765,7 +759,7 @@ function ProjectsSection() {
 
           {/* Buttons */}
 
-          <div className="flex justify-end gap-4 mt-8">
+          <div className="flex flex-col-reverse sm:flex-row justify-end gap-4 mt-8">
 
             <Button
               variant="secondary"
@@ -795,164 +789,178 @@ function ProjectsSection() {
           Projects Table
       ----------------------------------------- */}
 
-      <div className="bg-[#161B22] rounded-xl overflow-hidden">
+      <div className="bg-[#161B22] rounded-xl overflow-hidden w-full">
 
-        <table className="w-full">
+        <div className="w-full overflow-x-auto">
 
-          <thead className="bg-[#1F2937]">
+          <table className="w-full min-w-[950px]">
 
-            <tr>
-
-              <th className="p-4 text-left text-white">
-                Code
-              </th>
-
-              <th className="p-4 text-left text-white">
-                Title
-              </th>
-
-              <th className="p-4 text-left text-white">
-                Client
-              </th>
-
-              <th className="p-4 text-left text-white">
-                Service
-              </th>
-
-              <th className="p-4 text-left text-white">
-                Assigned To
-              </th>
-
-              <th className="p-4 text-left text-white">
-                Status
-              </th>
-
-              <th className="p-4 text-left text-white">
-                Priority
-              </th>
-
-              <th className="p-4 text-center text-white">
-                Actions
-              </th>
-
-            </tr>
-
-          </thead>
-
-
-          <tbody>
-
-            {projects.length === 0 ? (
+            <thead className="bg-[#1F2937]">
 
               <tr>
 
-                <td
-                  colSpan="8"
-                  className="text-center p-8 text-gray-400"
-                >
-                  No Projects Found
-                </td>
+                <th className="p-4 text-left text-white whitespace-nowrap">
+                  Code
+                </th>
+
+                <th className="p-4 text-left text-white">
+                  Title
+                </th>
+
+                <th className="p-4 text-left text-white whitespace-nowrap">
+                  Client
+                </th>
+
+                <th className="p-4 text-left text-white">
+                  Service
+                </th>
+
+                <th className="p-4 text-left text-white">
+                  Assigned To
+                </th>
+
+                <th className="p-4 text-left text-white whitespace-nowrap">
+                  Status
+                </th>
+
+                <th className="p-4 text-left text-white whitespace-nowrap">
+                  Priority
+                </th>
+
+                <th className="p-4 text-center text-white whitespace-nowrap">
+                  Actions
+                </th>
 
               </tr>
 
-            ) : (
+            </thead>
 
-              projects.map((project) => (
 
-                <tr
-                  key={project.id}
-                  className="border-t border-zinc-800 hover:bg-[#202734]"
-                >
+            <tbody>
 
-                  <td className="p-4 text-white">
-                    {project.project_code}
-                  </td>
+              {projects.length === 0 ? (
 
-                  <td className="p-4 text-white">
-                    {project.title}
-                  </td>
+                <tr>
 
-                  <td className="p-4 text-gray-300">
-                    {getClientName(
-                      project.client_id
-                    )}
-                  </td>
-
-                  <td className="p-4 text-gray-300">
-                    {getServiceName(
-                      project.service_id
-                    )}
-                  </td>
-
-                  <td className="p-4 text-gray-300">
-                    {getUserName(
-                      project.assigned_to
-                    )}
-                  </td>
-
-                  <td className="p-4">
-
-                    <span
-                      className={`px-3 py-1 rounded-full text-sm font-medium ${
-                        project.status === "Completed"
-                          ? "bg-green-500/20 text-green-400"
-                          : project.status === "In Progress"
-                          ? "bg-blue-500/20 text-blue-400"
-                          : "bg-yellow-500/20 text-yellow-400"
-                      }`}
-                    >
-                      {project.status}
-                    </span>
-
-                  </td>
-
-                  <td className="p-4">
-
-                    <span
-                      className={`px-3 py-1 rounded-full text-sm font-medium ${
-                        project.priority === "High"
-                          ? "bg-red-500/20 text-red-400"
-                          : project.priority === "Medium"
-                          ? "bg-yellow-500/20 text-yellow-400"
-                          : "bg-green-500/20 text-green-400"
-                      }`}
-                    >
-                      {project.priority}
-                    </span>
-
-                  </td>
-
-                  <td className="p-4 flex justify-center gap-2">
-
-                    <Button
-                      variant="edit"
-                      onClick={() =>
-                        handleEdit(project)
-                      }
-                    >
-                      Edit
-                    </Button>
-
-                    <Button
-                      variant="delete"
-                      onClick={() =>
-                        handleDelete(project.id)
-                      }
-                    >
-                      Delete
-                    </Button>
-
+                  <td
+                    colSpan="8"
+                    className="text-center p-8 text-gray-400"
+                  >
+                    No Projects Found
                   </td>
 
                 </tr>
 
-              ))
+              ) : (
 
-            )}
+                projects.map((project) => (
 
-          </tbody>
+                  <tr
+                    key={project.id}
+                    className="border-t border-zinc-800 hover:bg-[#202734]"
+                  >
 
-        </table>
+                    <td className="p-4 text-white whitespace-nowrap">
+                      {project.project_code}
+                    </td>
+
+                    <td className="p-4 text-white">
+                      <div className="min-w-[140px] max-w-[220px] break-words">
+                        {project.title}
+                      </div>
+                    </td>
+
+                    <td className="p-4 text-gray-300 whitespace-nowrap">
+                      {getClientName(
+                        project.client_id
+                      )}
+                    </td>
+
+                    <td className="p-4 text-gray-300">
+                      <div className="min-w-[160px] max-w-[220px] break-words">
+                        {getServiceName(
+                          project.service_id
+                        )}
+                      </div>
+                    </td>
+
+                    <td className="p-4 text-gray-300">
+                      <div className="min-w-[130px] max-w-[180px] break-words">
+                        {getUserName(
+                          project.assigned_to
+                        )}
+                      </div>
+                    </td>
+
+                    <td className="p-4 whitespace-nowrap">
+
+                      <span
+                        className={`px-3 py-1 rounded-full text-sm font-medium ${
+                          project.status === "Completed"
+                            ? "bg-green-500/20 text-green-400"
+                            : project.status === "In Progress"
+                            ? "bg-blue-500/20 text-blue-400"
+                            : "bg-yellow-500/20 text-yellow-400"
+                        }`}
+                      >
+                        {project.status}
+                      </span>
+
+                    </td>
+
+                    <td className="p-4 whitespace-nowrap">
+
+                      <span
+                        className={`px-3 py-1 rounded-full text-sm font-medium ${
+                          project.priority === "High"
+                            ? "bg-red-500/20 text-red-400"
+                            : project.priority === "Medium"
+                            ? "bg-yellow-500/20 text-yellow-400"
+                            : "bg-green-500/20 text-green-400"
+                        }`}
+                      >
+                        {project.priority}
+                      </span>
+
+                    </td>
+
+                    <td className="p-4">
+
+                      <div className="flex justify-center gap-2 min-w-[160px]">
+
+                        <Button
+                          variant="edit"
+                          onClick={() =>
+                            handleEdit(project)
+                          }
+                        >
+                          Edit
+                        </Button>
+
+                        <Button
+                          variant="delete"
+                          onClick={() =>
+                            handleDelete(project.id)
+                          }
+                        >
+                          Delete
+                        </Button>
+
+                      </div>
+
+                    </td>
+
+                  </tr>
+
+                ))
+
+              )}
+
+            </tbody>
+
+          </table>
+
+        </div>
 
       </div>
 

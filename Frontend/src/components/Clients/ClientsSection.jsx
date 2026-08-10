@@ -45,30 +45,58 @@ function ClientsSection() {
     },
   ];
 
+  // -----------------------------------------
+  // Load Clients
+  // -----------------------------------------
+
   const loadClients = async () => {
+
     try {
+
       const response = await getClients();
+
       setClients(response.data);
+
     } catch (error) {
+
       console.error(error);
+
     }
+
   };
 
   useEffect(() => {
+
     const fetchClients = async () => {
       await loadClients();
     };
 
     fetchClients();
+
   }, []);
 
+  // -----------------------------------------
+  // Add Client
+  // -----------------------------------------
+
   const handleAdd = () => {
+
     setEditingId(null);
-    setFormData(emptyForm);
+
+    setFormData({
+      ...emptyForm,
+    });
+
     setIsModalOpen(true);
+
   };
 
+  // -----------------------------------------
+  // Edit Client
+  // -----------------------------------------
+
   const handleEdit = (client) => {
+
     setEditingId(client.id);
 
     setFormData({
@@ -79,7 +107,12 @@ function ClientsSection() {
     });
 
     setIsModalOpen(true);
+
   };
+
+  // -----------------------------------------
+  // Save Client
+  // -----------------------------------------
 
   const handleSave = async () => {
 
@@ -112,6 +145,10 @@ function ClientsSection() {
 
   };
 
+  // -----------------------------------------
+  // Delete Client
+  // -----------------------------------------
+
   const handleDelete = async (id) => {
 
     const confirmed = window.confirm(
@@ -134,140 +171,166 @@ function ClientsSection() {
 
   };
 
+  // -----------------------------------------
+  // UI
+  // -----------------------------------------
+
   return (
 
     <>
 
-      <div className="flex justify-between items-center mb-6">
+      {/* -----------------------------------------
+          Add Client
+      ----------------------------------------- */}
 
-        
+      <div className="flex justify-between items-center mb-6">
 
         <button
           onClick={handleAdd}
           className="bg-yellow-500 text-black px-5 py-3 rounded-lg font-semibold hover:bg-yellow-400"
         >
-
           Add Client
-
         </button>
 
       </div>
 
-      <div className="bg-[#161B22] rounded-xl overflow-hidden">
 
-        <table className="w-full">
+      {/* -----------------------------------------
+          Clients Table
+      ----------------------------------------- */}
 
-          <thead className="bg-[#1F2937]">
+      <div className="bg-[#161B22] rounded-xl overflow-hidden w-full">
 
-            <tr>
+        <div className="w-full overflow-x-auto">
 
-              <th className="p-4 text-left text-white">
-                Name
-              </th>
+          <table className="w-full min-w-[750px]">
 
-              <th className="p-4 text-left text-white">
-                Email
-              </th>
-
-              <th className="p-4 text-left text-white">
-                Phone
-              </th>
-
-              <th className="p-4 text-left text-white">
-                Company
-              </th>
-
-              <th className="p-4 text-center text-white">
-                Actions
-              </th>
-
-            </tr>
-
-          </thead>
-
-          <tbody>
-
-            {clients.length === 0 ? (
+            <thead className="bg-[#1F2937]">
 
               <tr>
 
-                <td
-                  colSpan="5"
-                  className="text-center text-gray-400 p-8"
-                >
+                <th className="p-4 text-left text-white whitespace-nowrap">
+                  Name
+                </th>
 
-                  No Clients Found
+                <th className="p-4 text-left text-white whitespace-nowrap">
+                  Email
+                </th>
 
-                </td>
+                <th className="p-4 text-left text-white whitespace-nowrap">
+                  Phone
+                </th>
+
+                <th className="p-4 text-left text-white whitespace-nowrap">
+                  Company
+                </th>
+
+                <th className="p-4 text-center text-white whitespace-nowrap">
+                  Actions
+                </th>
 
               </tr>
 
-            ) : (
+            </thead>
 
-              clients.map((client) => (
 
-                <tr
-                  key={client.id}
-                  className="border-t border-zinc-800 hover:bg-[#202734]"
-                >
+            <tbody>
 
-                  <td className="p-4 text-white">
+              {clients.length === 0 ? (
 
-                    {client.full_name}
+                <tr>
 
-                  </td>
-
-                  <td className="p-4 text-gray-300">
-
-                    {client.email}
-
-                  </td>
-
-                  <td className="p-4 text-gray-300">
-
-                    {client.phone}
-
-                  </td>
-
-                  <td className="p-4 text-gray-300">
-
-                    {client.company}
-
-                  </td>
-
-                  <td className="p-4 flex justify-center gap-3">
-
-                    <button
-                      onClick={() => handleEdit(client)}
-                      className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-white"
-                    >
-
-                      Edit
-
-                    </button>
-
-                    <button
-                      onClick={() => handleDelete(client.id)}
-                      className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded text-white"
-                    >
-
-                      Delete
-
-                    </button>
-
+                  <td
+                    colSpan="5"
+                    className="text-center text-gray-400 p-8"
+                  >
+                    No Clients Found
                   </td>
 
                 </tr>
 
-              ))
+              ) : (
 
-            )}
+                clients.map((client) => (
 
-          </tbody>
+                  <tr
+                    key={client.id}
+                    className="border-t border-zinc-800 hover:bg-[#202734]"
+                  >
 
-        </table>
+                    <td className="p-4 text-white whitespace-nowrap">
+                      {client.full_name}
+                    </td>
+
+
+                    <td className="p-4 text-gray-300">
+
+                      <div className="min-w-[180px] max-w-[250px] break-words">
+                        {client.email}
+                      </div>
+
+                    </td>
+
+
+                    <td className="p-4 text-gray-300 whitespace-nowrap">
+                      {client.phone}
+                    </td>
+
+
+                    <td className="p-4 text-gray-300">
+
+                      <div className="min-w-[130px] max-w-[200px] break-words">
+                        {client.company}
+                      </div>
+
+                    </td>
+
+
+                    <td className="p-4">
+
+                      <div className="flex justify-center gap-3 min-w-[170px]">
+
+                        <button
+                          onClick={() =>
+                            handleEdit(client)
+                          }
+                          className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-white"
+                        >
+                          Edit
+                        </button>
+
+
+                        <button
+                          onClick={() =>
+                            handleDelete(client.id)
+                          }
+                          className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded text-white"
+                        >
+                          Delete
+                        </button>
+
+                      </div>
+
+                    </td>
+
+                  </tr>
+
+                ))
+
+              )}
+
+            </tbody>
+
+          </table>
+
+        </div>
 
       </div>
+
+
+      {/* -----------------------------------------
+          Client Modal
+      ----------------------------------------- */}
 
       <CrudModal
         isOpen={isModalOpen}
@@ -280,7 +343,9 @@ function ClientsSection() {
         formData={formData}
         setFormData={setFormData}
         onSave={handleSave}
-        onClose={() => setIsModalOpen(false)}
+        onClose={() =>
+          setIsModalOpen(false)
+        }
       />
 
     </>

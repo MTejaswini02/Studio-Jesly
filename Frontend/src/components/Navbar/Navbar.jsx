@@ -4,149 +4,165 @@ import { useState } from "react";
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+
+  const navLinks = [
+    { name: "Home", path: "/" },
+    { name: "Services", path: "/services" },
+    { name: "Portfolio", path: "/portfolio" },
+    { name: "About", path: "/about" },
+    { name: "Contact", path: "/contact" },
+  ];
+
   return (
-    <nav className="fixed top-0 left-0 w-full bg-[#0D1117]/90 backdrop-blur-md border-b border-zinc-800 z-50">
-      <div className="max-w-7xl mx-auto flex items-center justify-between px-8 py-5">
+    <nav className="fixed top-0 left-0 w-full z-50 bg-[#0D1117] border-b border-zinc-800">
 
-        <NavLink
-          to="/"
-          className="text-3xl font-bold tracking-tight text-white hover:text-yellow-500 duration-300"
-        >
-          studio <span className="text-yellow-500">jesly</span>
-        </NavLink>
-        <div className="hidden md:flex gap-10 text-zinc-300">
+      <div className="max-w-7xl mx-auto px-6 md:px-8 h-20 md:h-24 flex items-center justify-between">
 
-         
+        {/* ================= STUDIO JESLY WORDMARK ================= */}
+
           <NavLink
             to="/"
-            className={({ isActive }) =>
-              isActive
-                ? "text-yellow-500 font-semibold"
-                : "text-zinc-300 hover:text-yellow-500 duration-300"
-            }
+            onClick={() => setIsOpen(false)}
+            className="relative block w-[220px] sm:w-[230px] h-[78px] md:h-[82px]"
           >
-             Home
-          </NavLink>
+            {/* studio */}
+            <span
+              className="
+                absolute
+                top-[17px]
+                left-[29px]
+                text-white
+                text-[13px]
+                sm:text-[14px]
+                tracking-[5px]
+                leading-none
+                whitespace-nowrap
+              "
+              style={{
+                fontFamily: "'Inter', sans-serif",
+              }}
+            >
+              studio
+            </span>
 
-          <NavLink
-            to="/services"
-            className={({ isActive }) =>
-              isActive
-                ? "text-yellow-500 font-semibold"
-                : "text-zinc-300 hover:text-yellow-500 duration-300"
-            }
-          >
-             Services
-          </NavLink>
+            {/* jesly */}
+            <span
+              className="
+                absolute
+                top-[12px]
+                left-[8px]
+                text-yellow-500
+                text-[64px]
+                sm:text-[70px]
+                md:text-[70px]
+                leading-none
+                tracking-[3px]
+                whitespace-nowrap
+              "
+              style={{
+                fontFamily: "'Playfair Display', serif",
+                fontWeight: 500,
+              }}
+            >
+              jesly
+            </span>
 
-          <NavLink
-            to="/portfolio"
-            className={({ isActive }) =>
-              isActive
-                ? "text-yellow-500 font-semibold"
-                : "text-zinc-300 hover:text-yellow-500 duration-300"
-            }
-          >
-             Portfolio
           </NavLink>
+        {/* ================= DESKTOP NAVIGATION ================= */}
 
-          <NavLink
-            to="/about"
-            className={({ isActive }) =>
-              isActive
-                ? "text-yellow-500 font-semibold"
-                : "text-zinc-300 hover:text-yellow-500 duration-300"
-            }
-          >
-             About
-          </NavLink>
+        <div className="hidden md:flex items-center gap-10">
 
-          <NavLink
-            to="/contact"
-            className={({ isActive }) =>
-              isActive
-                ? "text-yellow-500 font-semibold"
-                : "text-zinc-300 hover:text-yellow-500 duration-300"
-            }
-          >
-             Contact
-          </NavLink>
+          {navLinks.map((link) => (
 
-          
+            <NavLink
+              key={link.path}
+              to={link.path}
+              className={({ isActive }) =>
+                `text-base lg:text-lg transition-colors duration-300 ${
+                  isActive
+                    ? "text-yellow-500"
+                    : "text-zinc-300 hover:text-yellow-500"
+                }`
+              }
+            >
+              {link.name}
+            </NavLink>
+
+          ))}
+
         </div>
 
-        <div className="flex items-center gap-4">
+
+        {/* ================= RIGHT SIDE ================= */}
+
+        <div className="flex items-center">
 
           <NavLink
             to="/signup"
-            className={({ isActive }) =>
-              isActive
-                ? "hidden md:block bg-yellow-600 text-black px-6 py-3 rounded-xl font-semibold"
-                : "hidden md:block bg-yellow-500 text-black px-6 py-3 rounded-xl font-semibold hover:scale-105 duration-300"
-            }
+            className="hidden md:inline-flex bg-yellow-500 text-black px-7 py-3.5 rounded-xl font-semibold hover:bg-yellow-400 hover:scale-105 transition-all duration-300"
           >
             Start Project
           </NavLink>
 
+
+          {/* Mobile menu */}
+
           <button
-            className="md:hidden text-white"
+            type="button"
+            aria-label={isOpen ? "Close menu" : "Open menu"}
+            aria-expanded={isOpen}
+            className="md:hidden text-white p-2"
             onClick={() => setIsOpen(!isOpen)}
           >
-           {isOpen ? <X size={28} /> : <Menu size={28} />}
+            {isOpen ? <X size={27} /> : <Menu size={27} />}
           </button>
 
         </div>
+
+
+        {/* ================= MOBILE MENU ================= */}
+
         {isOpen && (
-          <div className="absolute top-full left-0 w-full bg-[#0D1117] border-t border-zinc-800 md:hidden">
 
-            <div className="flex flex-col p-6 gap-5">
+          <div className="absolute top-20 left-0 w-full bg-[#0D1117] border-b border-zinc-800 md:hidden">
 
-              <NavLink
-                to="/"
-                onClick={() => setIsOpen(false)}
-                className="text-zinc-300 hover:text-yellow-500"
-              >
-                Home
-              </NavLink>
+            <div className="flex flex-col px-6 py-6 gap-5">
 
-              <NavLink
-                to="/services"
-                onClick={() => setIsOpen(false)}
-                className="text-zinc-300 hover:text-yellow-500"
-              >
-                Services
-              </NavLink>
+              {navLinks.map((link) => (
 
-              <NavLink
-                to="/portfolio"
-                onClick={() => setIsOpen(false)}
-                className="text-zinc-300 hover:text-yellow-500"
-              >
-               Portfolio
-              </NavLink>
+                <NavLink
+                  key={link.path}
+                  to={link.path}
+                  onClick={() => setIsOpen(false)}
+                  className={({ isActive }) =>
+                    `text-base transition-colors duration-300 ${
+                      isActive
+                        ? "text-yellow-500"
+                        : "text-zinc-300 hover:text-yellow-500"
+                    }`
+                  }
+                >
+                  {link.name}
+                </NavLink>
+
+              ))}
 
               <NavLink
-                to="/about"
+                to="/signup"
                 onClick={() => setIsOpen(false)}
-                className="text-zinc-300 hover:text-yellow-500"
+                className="bg-yellow-500 text-black text-center px-6 py-3 rounded-xl font-semibold hover:bg-yellow-400 transition-colors duration-300 mt-1"
               >
-                About
-              </NavLink>
-
-              <NavLink
-                to="/contact"
-                onClick={() => setIsOpen(false)}
-                className="text-zinc-300 hover:text-yellow-500"
-              >
-                Contact
+                Start Project
               </NavLink>
 
             </div>
 
           </div>
+
         )}
 
       </div>
+
     </nav>
   );
 }

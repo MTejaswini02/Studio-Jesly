@@ -8,30 +8,23 @@ import {
 
 import { getCurrentUser } from "../utils/auth";
 
-
 function Login() {
-
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
 
   // -----------------------------------------
   // Email + Password Login
   // -----------------------------------------
 
   const handleLogin = async () => {
-
     if (!email || !password) {
-
       alert("Please enter your email and password.");
-
       return;
     }
 
     try {
-
       const response = await loginUser(
         email,
         password
@@ -45,31 +38,23 @@ function Login() {
         token
       );
 
-
       const user = getCurrentUser();
-
 
       if (
         user?.role?.toLowerCase() ===
         "admin"
       ) {
-
         navigate("/admin");
-
         return;
       }
-
 
       if (
         user?.role?.toLowerCase() ===
         "client"
       ) {
-
         navigate("/client");
-
         return;
       }
-
 
       localStorage.removeItem(
         "access_token"
@@ -80,7 +65,6 @@ function Login() {
       );
 
     } catch (error) {
-
       console.error(
         "Login failed:",
         error
@@ -89,11 +73,8 @@ function Login() {
       alert(
         "Invalid email or password."
       );
-
     }
-
   };
-
 
   // -----------------------------------------
   // Google Login
@@ -102,50 +83,38 @@ function Login() {
   const handleGoogleLogin = async (
     response
   ) => {
-
     try {
-
       const result =
         await googleLogin(
           response.credential
         );
 
-
       const token =
         result.data.access_token;
-
 
       localStorage.setItem(
         "access_token",
         token
       );
 
-
       const user =
         getCurrentUser();
-
 
       if (
         user?.role?.toLowerCase() ===
         "admin"
       ) {
-
         navigate("/admin");
-
         return;
       }
-
 
       if (
         user?.role?.toLowerCase() ===
         "client"
       ) {
-
         navigate("/client");
-
         return;
       }
-
 
       localStorage.removeItem(
         "access_token"
@@ -156,7 +125,6 @@ function Login() {
       );
 
     } catch (error) {
-
       console.error(
         "Google login failed:",
         error
@@ -165,45 +133,34 @@ function Login() {
       alert(
         "Google login failed."
       );
-
     }
-
   };
-
 
   // -----------------------------------------
   // Google Identity Services
   // -----------------------------------------
 
   useEffect(() => {
-
     const initializeGoogleLogin = () => {
-
       if (!window.google) {
         return;
       }
 
-
       window.google.accounts.id.initialize({
-
         client_id:
           import.meta.env
             .VITE_GOOGLE_CLIENT_ID,
 
         callback:
           handleGoogleLogin,
-
       });
-
 
       const button =
         document.getElementById(
           "google-login-button"
         );
 
-
       if (button) {
-
         button.innerHTML = "";
 
         window.google.accounts.id.renderButton(
@@ -215,14 +172,10 @@ function Login() {
             text: "continue_with",
           }
         );
-
       }
-
     };
 
-
     if (!window.google) {
-
       const script =
         document.createElement("script");
 
@@ -239,127 +192,168 @@ function Login() {
         script
       );
 
-
       return () => {
-
         document.body.removeChild(
           script
         );
-
       };
 
     } else {
-
       initializeGoogleLogin();
-
     }
-
   }, []);
-
 
   // -----------------------------------------
   // UI
   // -----------------------------------------
 
   return (
+    <div className="min-h-screen bg-[#0D1117] flex items-center justify-center px-6 py-12">
 
-    <div className="min-h-screen bg-[#0D1117] flex items-center justify-center">
+      <div className="w-full max-w-[440px]">
 
-      <div className="bg-[#161B22] p-10 rounded-xl w-[420px]">
+        {/* Brand */}
 
-        <h1 className="text-3xl font-bold text-white text-center mb-2">
-          Studio Jesly
-        </h1>
+        <div className="text-center mb-8">
 
+          <button
+            onClick={() => navigate("/")}
+            className="text-3xl font-bold tracking-tight text-white"
+          >
+            studio{" "}
+            <span className="text-yellow-500">
+              jesly
+            </span>
+          </button>
 
-        <p className="text-gray-400 text-center mb-8">
-          Welcome Back
-        </p>
-
-
-        {/* Email */}
-
-        <input
-          type="email"
-          placeholder="Email"
-          className="w-full p-3 rounded bg-[#0D1117] text-white mb-4 border border-zinc-700"
-          value={email}
-          onChange={(e) =>
-            setEmail(e.target.value)
-          }
-        />
-
-
-        {/* Password */}
-
-        <input
-          type="password"
-          placeholder="Password"
-          className="w-full p-3 rounded bg-[#0D1117] text-white mb-6 border border-zinc-700"
-          value={password}
-          onChange={(e) =>
-            setPassword(e.target.value)
-          }
-        />
-
-
-        {/* Login */}
-
-        <button
-          onClick={handleLogin}
-          className="w-full bg-yellow-500 hover:bg-yellow-400 text-black py-3 rounded-lg font-semibold"
-        >
-          Login
-        </button>
-
-
-        {/* Divider */}
-
-        <div className="flex items-center gap-3 my-6">
-
-          <div className="flex-1 h-px bg-zinc-700" />
-
-          <span className="text-gray-500 text-sm">
-            OR
-          </span>
-
-          <div className="flex-1 h-px bg-zinc-700" />
+          <p className="text-zinc-400 mt-3">
+            Welcome back
+          </p>
 
         </div>
 
 
-        {/* Google */}
+        {/* Login Card */}
 
-        <div
-          id="google-login-button"
-          className="flex justify-center"
-        />
+        <div className="bg-[#161B22] border border-zinc-800 rounded-3xl p-7 sm:p-10">
+
+          <h1 className="text-2xl sm:text-3xl font-bold text-white text-center mb-2">
+            Welcome Back
+          </h1>
+
+          <p className="text-zinc-400 text-center mb-8">
+            Login to continue your project.
+          </p>
 
 
-        {/* Signup */}
+          {/* Email */}
 
-        <p className="text-gray-400 text-center mt-6">
+          <div className="mb-5">
 
-          Don't have an account?{" "}
+            <label className="block text-sm text-zinc-300 mb-2">
+              Email Address
+            </label>
+
+            <input
+              type="email"
+              placeholder="Enter your email"
+              className="w-full p-3.5 rounded-xl bg-[#0D1117] text-white placeholder:text-zinc-600 border border-zinc-700 outline-none transition-all duration-300 focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500/20"
+              value={email}
+              onChange={(e) =>
+                setEmail(e.target.value)
+              }
+            />
+
+          </div>
+
+
+          {/* Password */}
+
+          <div className="mb-7">
+
+            <label className="block text-sm text-zinc-300 mb-2">
+              Password
+            </label>
+
+            <input
+              type="password"
+              placeholder="Enter your password"
+              className="w-full p-3.5 rounded-xl bg-[#0D1117] text-white placeholder:text-zinc-600 border border-zinc-700 outline-none transition-all duration-300 focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500/20"
+              value={password}
+              onChange={(e) =>
+                setPassword(e.target.value)
+              }
+            />
+
+          </div>
+
+
+          {/* Login */}
 
           <button
-            onClick={() =>
-              navigate("/signup")
-            }
-            className="text-yellow-400 hover:text-yellow-300"
+            onClick={handleLogin}
+            className="w-full bg-yellow-500 hover:bg-yellow-400 text-black py-3.5 rounded-xl font-semibold transition-all duration-300 hover:-translate-y-0.5"
           >
-            Sign Up
+            Login
           </button>
 
-        </p>
+
+          {/* Divider */}
+
+          <div className="flex items-center gap-4 my-7">
+
+            <div className="flex-1 h-px bg-zinc-800" />
+
+            <span className="text-zinc-500 text-sm">
+              OR
+            </span>
+
+            <div className="flex-1 h-px bg-zinc-800" />
+
+          </div>
+
+
+          {/* Google Login */}
+
+          <div
+            id="google-login-button"
+            className="flex justify-center w-full overflow-hidden"
+          />
+
+
+          {/* Signup */}
+
+          <p className="text-zinc-400 text-center mt-7 text-sm">
+
+            Don't have an account?{" "}
+
+            <button
+              onClick={() =>
+                navigate("/signup")
+              }
+              className="text-yellow-500 hover:text-yellow-400 font-medium transition-colors"
+            >
+              Sign Up
+            </button>
+
+          </p>
+
+        </div>
+
+
+        {/* Back to website */}
+
+        <button
+          onClick={() => navigate("/")}
+          className="block mx-auto mt-6 text-sm text-zinc-500 hover:text-yellow-500 transition-colors"
+        >
+          ← Back to Studio Jesly
+        </button>
 
       </div>
 
     </div>
-
   );
-
 }
-
 
 export default Login;
