@@ -171,7 +171,7 @@ function Contact() {
             {/* Email */}
 
             <a
-              href="mailto:Tejaswinimaddali07@gmail.com"
+              href="studiojesly@gmail.com"
               className="group bg-[#161B22] rounded-3xl border border-zinc-800 p-6 md:p-10 flex items-center gap-6 hover:-translate-y-1 hover:border-yellow-500/40 transition-all duration-300"
             >
 
@@ -187,7 +187,7 @@ function Contact() {
                 </h3>
 
                 <p className="text-zinc-400 break-all group-hover:text-zinc-300 transition-colors">
-                  Tejaswinimaddali07@gmail.com
+                  studiojesly@gmail.com
                 </p>
 
               </div>

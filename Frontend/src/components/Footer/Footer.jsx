@@ -98,8 +98,8 @@ function Footer() {
 
               <div className="flex items-center gap-3 text-zinc-400">
                 <Mail size={18} />
-                <a href="mailto: Tejaswinimaddali07@gmail.com">
-                  <span>Tejaswinimaddali07@gmail.com</span>
+                <a href="mailto: studiojesly@gmail.com">
+                  <span>studiojesly@gmail.com</span>
                 </a>
                 
               </div>
