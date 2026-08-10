@@ -41,3 +41,12 @@ class ClientSignup(BaseModel):
     full_name: str
     email: EmailStr
     password: str
+
+class SignupOTPRequest(BaseModel):
+    email: EmailStr
+    otp: str
+
+
+class SignupOTPResponse(BaseModel):
+    message: str
+    email: EmailStr

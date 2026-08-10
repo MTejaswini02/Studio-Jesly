@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
@@ -13,6 +13,8 @@ from app.schemas.user_schema import (
     Token,
     GoogleLoginRequest,
     ClientSignup,
+    SignupOTPRequest,
+    SignupOTPResponse,
 )
 
 from app.services.user_service import UserService
@@ -24,7 +26,6 @@ router = APIRouter(
     prefix="/users",
     tags=["Users"]
 )
-
 
 user_service = UserService()
 
@@ -46,7 +47,9 @@ def create_user(
 
     return success_response(
         message="User created successfully",
-        data=UserResponse.model_validate(created_user)
+        data=UserResponse.model_validate(
+            created_user
+        )
     )
 
 
@@ -56,7 +59,7 @@ def create_user(
 
 @router.post(
     "/signup",
-    response_model=UserResponse
+    response_model=SignupOTPResponse
 )
 def client_signup(
     user: ClientSignup,
@@ -75,7 +78,7 @@ def client_signup(
 
 @router.post(
     "/google-signup",
-    response_model=Token
+    response_model=SignupOTPResponse
 )
 def google_signup(
     data: GoogleLoginRequest,
@@ -86,6 +89,39 @@ def google_signup(
         db,
         data.google_token,
     )
+
+
+# -----------------------------------------
+# Verify Signup OTP
+# -----------------------------------------
+
+@router.post(
+    "/verify-signup-otp",
+    response_model=Token
+)
+def verify_signup_otp(
+    data: SignupOTPRequest,
+    db: Session = Depends(get_db),
+):
+
+    try:
+
+        user = user_service.verify_client_signup_otp(
+            db=db,
+            email=str(data.email),
+            otp=data.otp,
+        )
+
+        return user_service.create_user_token(
+            user
+        )
+
+    except ValueError as error:
+
+        raise HTTPException(
+            status_code=400,
+            detail=str(error)
+        )
 
 
 # -----------------------------------------

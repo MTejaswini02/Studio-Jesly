@@ -25,6 +25,12 @@ from app.core.jwt import create_access_token
 from app.core.logger import logger
 from app.core.config import settings
 
+from app.services.otp_service import (
+    create_signup_verification,
+    verify_signup_otp,
+    delete_signup_verification,
+)
+
 from google.oauth2 import id_token
 from google.auth.transport import requests
 
@@ -159,6 +165,10 @@ class UserService:
         email = str(user_data.email).lower()
 
 
+        # -----------------------------------------
+        # Check whether account already exists
+        # -----------------------------------------
+
         existing_user = (
             self.repository.get_by_email(
                 db,
@@ -171,12 +181,96 @@ class UserService:
             raise EmailAlreadyExistsException()
 
 
-        user = User(
-            full_name=user_data.full_name,
+        # -----------------------------------------
+        # Hash password before temporary storage
+        # -----------------------------------------
+
+        password_hash = hash_password(
+            user_data.password
+        )
+
+
+        # -----------------------------------------
+        # Create temporary signup verification
+        # -----------------------------------------
+
+        create_signup_verification(
+            db=db,
             email=email,
-            password=hash_password(
-                user_data.password
-            ),
+            full_name=user_data.full_name,
+            password_hash=password_hash,
+        )
+
+
+        logger.info(
+            f"Signup OTP sent | Email: {email}"
+        )
+
+
+        # User and Client are NOT created yet.
+        # They will only be created after OTP verification.
+
+        return {
+            "message": "OTP sent to your email.",
+            "email": email,
+        }
+
+
+    # -----------------------------------------
+    # Verify Client Signup OTP
+    # -----------------------------------------
+
+    def verify_client_signup_otp(
+        self,
+        db: Session,
+        email: str,
+        otp: str,
+    ):
+
+        email = email.lower()
+
+
+        # -----------------------------------------
+        # Verify OTP
+        # -----------------------------------------
+
+        verification = verify_signup_otp(
+            db=db,
+            email=email,
+            otp=otp,
+        )
+
+
+        # -----------------------------------------
+        # Check whether account already exists
+        # -----------------------------------------
+
+        existing_user = (
+            self.repository.get_by_email(
+                db,
+                email
+            )
+        )
+
+
+        if existing_user:
+
+            delete_signup_verification(
+                db,
+                verification
+            )
+
+            raise EmailAlreadyExistsException()
+
+
+        # -----------------------------------------
+        # Create actual User
+        # -----------------------------------------
+
+        user = User(
+            full_name=verification.full_name,
+            email=email,
+            password=verification.password_hash,
             role="client"
         )
 
@@ -187,7 +281,9 @@ class UserService:
         )
 
 
+        # -----------------------------------------
         # Create corresponding Client record
+        # -----------------------------------------
 
         self._ensure_client_record(
             db,
@@ -196,8 +292,18 @@ class UserService:
         )
 
 
+        # -----------------------------------------
+        # Remove temporary verification
+        # -----------------------------------------
+
+        delete_signup_verification(
+            db,
+            verification
+        )
+
+
         logger.info(
-            f"Client account created | Email: {created_user.email}"
+            f"Client account verified and created | Email: {created_user.email}"
         )
 
 
@@ -323,6 +429,30 @@ class UserService:
 
             raise InvalidCredentialsException()
 
+
+        access_token = create_access_token(
+            data={
+                "sub": user.email,
+                "role": user.role,
+                "user_id": user.id
+            }
+        )
+
+
+        return {
+            "access_token": access_token,
+            "token_type": "bearer"
+        }
+
+
+    # -----------------------------------------
+    # Create User Access Token
+    # -----------------------------------------
+
+    def create_user_token(
+        self,
+        user: User
+    ):
 
         access_token = create_access_token(
             data={
@@ -495,7 +625,7 @@ class UserService:
 
 
         # -----------------------------------------
-        # Step 4: Create User
+        # Step 4: Create temporary password
         # -----------------------------------------
 
         random_password = secrets.token_urlsafe(
@@ -503,52 +633,33 @@ class UserService:
         )
 
 
-        user = User(
-            full_name=full_name,
+        password_hash = hash_password(
+            random_password
+        )
+
+
+        # -----------------------------------------
+        # Step 5: Create temporary signup
+        # verification
+        # -----------------------------------------
+
+        create_signup_verification(
+            db=db,
             email=email,
-            password=hash_password(
-                random_password
-            ),
-            role="client"
-        )
-
-
-        created_user = self.repository.create(
-            db,
-            user
-        )
-
-
-        # -----------------------------------------
-        # Step 5: Create Client Record
-        # -----------------------------------------
-
-        self._ensure_client_record(
-            db,
-            created_user.full_name,
-            email
-        )
-
-
-        # -----------------------------------------
-        # Step 6: Create Studio Jesly JWT
-        # -----------------------------------------
-
-        access_token = create_access_token(
-            data={
-                "sub": created_user.email,
-                "role": created_user.role,
-                "user_id": created_user.id
-            }
+            full_name=full_name,
+            password_hash=password_hash,
         )
 
 
         logger.info(
-            f"Google client account created | Email: {created_user.email}"
+            f"Google signup OTP sent | Email: {email}"
         )
 
 
+        # User and Client are NOT created yet.
+        # They will only be created after OTP verification.
+
         return {
-            "access_token": access_token,
-            "token_type": "bearer"
+            "message": "OTP sent to your Google account email.",
+            "email": email,
         }

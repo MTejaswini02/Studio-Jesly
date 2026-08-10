@@ -69,3 +69,10 @@ export const googleSignup = (googleToken) => {
   );
 
 };
+
+export const verifySignupOTP = (email, otp) => {
+  return api.post("/users/verify-signup-otp", {
+    email,
+    otp,
+  });
+};
