@@ -2,22 +2,22 @@ function PortfolioPreview() {
 
   const projects = [
     {
-      title: "Startup Pitch Deck",
+      title: "Fashion Design",
       category: "Presentation Design",
       image:
-        "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80",
+        "/Portfolio Assets/Presentation Design/Fashion design.png",
     },
     {
       title: "ATS Resume Design",
       category: "Resume Services",
       image:
-        "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&q=80",
+        "/Portfolio Assets/Resume Services/resume2_cover.png",
     },
     {
-      title: "Instagram Brand Kit",
+      title: "Branded Event & Promotion Posters",
       category: "Canva Design",
       image:
-        "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80",
+        "/Portfolio Assets/Canva Design/Music poster.png",
     },
   ];
 
@@ -26,6 +26,10 @@ function PortfolioPreview() {
     <section className="bg-[#0D1117] px-8 py-28">
 
       <div className="max-w-7xl mx-auto">
+
+        {/* ==============================
+            SECTION HEADING
+        ============================== */}
 
         <h2 className="text-5xl font-bold text-white text-center">
 
@@ -39,20 +43,38 @@ function PortfolioPreview() {
 
         </p>
 
+
+        {/* ==============================
+            PROJECT CARDS
+        ============================== */}
+
         <div className="grid md:grid-cols-3 gap-8">
 
-          {projects.map((project,index)=>(
+          {projects.map((project, index) => (
 
             <div
               key={index}
-              className="rounded-3xl overflow-hidden bg-[#161B22] border border-zinc-800 hover:-translate-y-2 duration-300"
+              className="group rounded-3xl overflow-hidden bg-[#161B22] border border-zinc-800 hover:-translate-y-2 hover:shadow-2xl hover:shadow-yellow-500/10 transition-all duration-300"
             >
 
-              <img
-                src={project.image}
-                alt={project.title}
-                className="h-60 w-full object-cover group-hover:scale-105 transition-transform duration-500"
-              />
+              {/* ==============================
+                  IMAGE PREVIEW
+              ============================== */}
+
+              <div className="h-60 w-full bg-[#0D1117] overflow-hidden flex items-center justify-center">
+
+                <img
+                  src={project.image}
+                  alt={project.title}
+                  className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-500"
+                />
+
+              </div>
+
+
+              {/* ==============================
+                  PROJECT INFORMATION
+              ============================== */}
 
               <div className="p-8">
 
