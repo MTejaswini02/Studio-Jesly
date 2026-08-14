@@ -21,7 +21,7 @@ import Login from "./pages/Login";
 import Loader from "./components/Loader";
 
 import ProtectedRoute from "./components/ProtectedRoute";
-import ClientProtectedRoute from "./components/ClientProtectedRoute";
+import ClientProtectedRoute from "./components/clientProtectedRoute";
 
 
 function App() {
