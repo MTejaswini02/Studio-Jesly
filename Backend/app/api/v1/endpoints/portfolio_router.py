@@ -6,7 +6,10 @@ from fastapi import (
     HTTPException,
 )
 
-from fastapi.responses import FileResponse
+from fastapi.responses import (
+    FileResponse,
+    RedirectResponse,
+)
 
 from sqlalchemy.orm import Session
 
@@ -144,20 +147,14 @@ def view_portfolio(
         portfolio_id,
     )
 
-
     project_file = (
         db.query(ProjectFile)
         .filter(
-            ProjectFile.project_id
-            == portfolio.project_id,
-
-            ProjectFile.file_path.ilike(
-                "%.pdf"
-            ),
+            ProjectFile.project_id == portfolio.project_id,
+            ProjectFile.file_name.ilike("%.pdf"),
         )
         .first()
     )
-
 
     if not project_file:
 
@@ -166,6 +163,22 @@ def view_portfolio(
             detail="Portfolio PDF not found.",
         )
 
+    # =========================================
+    # GOOGLE DRIVE / EXTERNAL FILE
+    # =========================================
+
+    if project_file.file_path.startswith(
+        ("http://", "https://")
+    ):
+
+        return RedirectResponse(
+            url=project_file.file_path,
+            status_code=302,
+        )
+
+    # =========================================
+    # LOCAL FILE FALLBACK
+    # =========================================
 
     if not os.path.isfile(
         project_file.file_path
@@ -176,15 +189,11 @@ def view_portfolio(
             detail="Portfolio file not found on server.",
         )
 
-
     return FileResponse(
         path=project_file.file_path,
-
         media_type="application/pdf",
-
         headers={
-            "Content-Disposition":
-            "inline"
+            "Content-Disposition": "inline"
         },
     )
 
