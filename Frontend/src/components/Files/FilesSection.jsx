@@ -283,15 +283,10 @@ function FilesSection() {
                     <a
                       href={file.file_path}
                       target="_blank"
-                      rel="noreferrer"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition"
                     >
-
-                      <Button
-                        variant="edit"
-                      >
-                        Open
-                      </Button>
-
+                      Open
                     </a>
 
                     <Button
