@@ -281,7 +281,7 @@ function FilesSection() {
                   <td className="p-4 flex justify-center gap-2">
 
                     <a
-                      href={`http://127.0.0.1:8000/${file.file_path}`}
+                      href={file.file_path}
                       target="_blank"
                       rel="noreferrer"
                     >
