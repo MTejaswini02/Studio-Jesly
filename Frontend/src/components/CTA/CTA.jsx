@@ -4,17 +4,17 @@ function CTA() {
 
   return (
 
-    <section className="bg-[#0D1117] py-32 px-8">
+    <section className="bg-[#0D1117] py-20 sm:py-24 lg:py-32 px-4 sm:px-6 lg:px-8">
 
-      <div className="max-w-5xl mx-auto rounded-[40px] bg-yellow-500 p-16 text-center">
+      <div className="max-w-5xl mx-auto rounded-[30px] sm:rounded-[40px] bg-yellow-500 p-8 sm:p-12 lg:p-16 text-center">
 
-        <h2 className="text-5xl font-bold text-black">
+        <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-black leading-tight break-words">
 
           Ready to Build Something Amazing?
 
         </h2>
 
-        <p className="text-black/80 mt-8 text-xl">
+        <p className="text-black/80 mt-6 sm:mt-8 text-lg sm:text-xl max-w-3xl mx-auto">
 
           Let's transform your ideas into professional designs that leave a lasting impression.
 
@@ -24,7 +24,7 @@ function CTA() {
 
           to="/signup"
 
-          className="inline-block mt-12 bg-black text-white px-10 py-4 rounded-xl font-semibold hover:scale-105 duration-300"
+          className="inline-block mt-8 sm:mt-12 bg-black text-white px-8 sm:px-10 py-4 rounded-xl font-semibold hover:scale-105 duration-300"
 
         >
 
